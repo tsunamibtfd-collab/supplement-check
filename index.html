@@ -76,8 +76,8 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--warn);outline-o
 {
 // Supabase: paste your project URL and anon/publishable key (safe to expose; row-level security limits it to inserts).
 // Leave empty to hide the "send my answers" option.
-const SUPA_URL='';
-const SUPA_KEY='';
+const SUPA_URL='https://swnziwtxepkxxcezvpcc.supabase.co';
+const SUPA_KEY='sb_publishable_mQUqvqgDIEO902YGce848g_XReoH13k';
 const steps=[
 {t:'What are you hoping to improve?',s:'Pick all that apply.',f:[{id:'goals',type:'multi',req:1,o:[['strength','Strength and muscle'],['endurance','Endurance'],['sprint','Sprints and repeated hard efforts'],['recovery','Recovery and soreness'],['everyday','Everyday health, staying active'],['focus','Focus and mental sharpness'],['mood','Mood'],['stress','Stress and calm'],['sleep','Sleep'],['energy','Energy and fatigue']]}]},
 {t:'How do you move?',s:'Walking counts. So does not much at the moment.',f:[{id:'acts',type:'multi',label:'Activities',o:[['walk','Walking or hiking'],['strength','Weights or resistance'],['endurance','Running, cycling, swimming'],['team','Team or racquet sports'],['hiit','HIIT or classes'],['mind','Yoga, Pilates, mobility'],['none','Not much right now']]},{id:'freq',type:'single',label:'Days per week',o:[['0','0–1'],['2','2–3'],['4','4–5'],['6','6+']]},{id:'long',type:'single',label:'Typical session',o:[['s','Under 45 min'],['m','45–90 min'],['l','Over 90 min, or often in heat']]}]},
@@ -266,7 +266,7 @@ function send(btn){
   const msg=document.getElementById('sendmsg');btn.disabled=true;msg.textContent='Sending…';
   const {unit,...ans}=A;
   fetch(SUPA_URL.replace(/\/$/,'')+'/rest/v1/responses',{method:'POST',
-    headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json','Prefer':'return=minimal'},
+    headers:Object.assign({'apikey':SUPA_KEY,'Content-Type':'application/json','Prefer':'return=minimal'},SUPA_KEY.startsWith('eyJ')?{'Authorization':'Bearer '+SUPA_KEY}:{}),
     body:JSON.stringify({answers:{...ans,w_kg:Math.round(kg())||null,w:undefined},results:{picked:picked.map(p=>p.s.id),left:left.map(p=>p.s.id)}})})
   .then(r=>{if(!r.ok)throw 0;msg.textContent='Thank you. Your answers were sent.';btn.textContent='Sent'})
   .catch(()=>{msg.textContent='Could not send right now. Please try again later.';btn.disabled=false});

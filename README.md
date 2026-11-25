@@ -4,7 +4,11 @@ A short questionnaire about physical activity and mental-wellness goals that ret
 
 Educational prototype, not medical advice.
 
-## 1. Set up Supabase (about 2 minutes)
+## 1. Supabase
+
+Already set up: project **Supplement Check** (`swnziwtxepkxxcezvpcc`, Canada), table `responses`, keys filled in `index.html`. The steps below are only needed to rebuild it elsewhere.
+
+### Rebuilding from scratch
 
 1. In your Supabase project, open **SQL Editor**, paste `supabase.sql` and click **Run**.
 2. Open **Project Settings > API** (or **API Keys**) and copy:

@@ -11,6 +11,8 @@ create table if not exists public.responses (
 );
 
 alter table public.responses enable row level security;
+revoke all on public.responses from anon, authenticated;
+grant insert (answers, results) on public.responses to anon;
 
 -- Anonymous visitors may insert only. No select/update/delete policy exists,
 -- so the public key cannot read anyone's answers.
