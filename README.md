@@ -1,34 +1,22 @@
 # Supplement Check
 
-A short questionnaire about physical activity and mental-wellness goals that returns evidence-graded supplement information, with safety screening. It is one static page (`index.html`) hosted on GitHub Pages. Visitors can choose to send their answers anonymously to a Supabase table.
+A seven-question check on supplements, food and activity for active Canadians. Free preview, then a $19.95 CAD full report.
 
-Educational prototype, not medical advice.
+Educational tool, not medical advice.
 
-## 1. Supabase
+## How it fits together
 
-Already set up: project **Supplement Check** (`swnziwtxepkxxcezvpcc`, Canada), table `responses`, keys filled in `index.html`. The steps below are only needed to rebuild it elsewhere.
+- **Website** (`index.html`, `privacy.html`, `refund.html`): static pages on GitHub Pages. They contain no report logic.
+- **Report API**: a Supabase Edge Function called `report` in the Supabase project *Supplement Check*. It scores answers, returns the free preview, opens Stripe Checkout, confirms payment, and only then returns the full report. Its source is deliberately **not** in this public repository.
+- **Database**: `reports` (answers, payment status; only the function can read it; unpaid rows are deleted after 7 days) and `responses` (optional anonymous research answers; the public key can insert only).
 
-### Rebuilding from scratch
+## Turning on payments
 
-1. In your Supabase project, open **SQL Editor**, paste `supabase.sql` and click **Run**.
-2. Open **Project Settings > API** (or **API Keys**) and copy:
-   - the **Project URL**, e.g. `https://abcd1234.supabase.co`
-   - the **anon** key, or the **publishable** key (`sb_publishable_...`)
-3. In `index.html`, fill in `SUPA_URL` and `SUPA_KEY` near the top of the script.
+1. Create a Stripe account and complete business verification.
+2. In Stripe, go to **Developers → API keys** and copy the **secret key** (start with a test key, `sk_test_...`).
+3. In Supabase, open **Edge Functions → Secrets** for the *Supplement Check* project and add `STRIPE_SECRET_KEY` with that value.
+4. Test a purchase with Stripe's test card `4242 4242 4242 4242`, then switch to the live key.
+5. Optional backup: in Stripe, add a webhook to `https://swnziwtxepkxxcezvpcc.supabase.co/functions/v1/report` for `checkout.session.completed`, and add its signing secret in Supabase as `STRIPE_WEBHOOK_SECRET`.
+6. Optional: for a custom domain, add it in **Settings → Pages**, then set the Supabase secret `SITE_URL` to the new address so checkout returns there.
 
-That key is meant to be public. Row-level security lets it add rows to `responses` and nothing else. **Never** put the `service_role` or secret key in this file.
-
-## 2. Publish on GitHub Pages
-
-1. Create a new repository (e.g. `supplement-check`) and push these files to `main`.
-2. In the repo, go to **Settings > Pages** and set **Source** to **GitHub Actions**.
-3. The workflow in `.github/workflows/pages.yml` deploys on every push. Your link is
-   `https://<your-username>.github.io/supplement-check/`
-
-## 3. See responses
-
-In Supabase, open **Table Editor > responses**, or use the sample queries at the bottom of `supabase.sql`.
-
-## Privacy
-
-Answers include health information (conditions, medicines, pregnancy). Sending is opt-in and stores no names or contact details. Tell your friends what you collect, and delete rows you no longer need.
+Before going live, replace the contact lines in `privacy.html` and `refund.html` and set a support email in Stripe.
