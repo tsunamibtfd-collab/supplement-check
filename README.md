@@ -1,4 +1,4 @@
-# Supplement Check
+# PlateFirst (platefirst.ca)
 
 A seven-question check on supplements, food and activity for active Canadians. Free preview, then a $19.95 CAD full report.
 

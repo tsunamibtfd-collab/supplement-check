@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Supplement Check</title>
+<title>PlateFirst</title>
 <meta name="description" content="Seven questions, a free preview, and an evidence-graded supplement, food and activity report for active Canadians.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -24,6 +24,7 @@ h1,h2,h3,.lab{font-family:Archivo,Inter,sans-serif}
 a{color:var(--ok)}
 .wrap{max-width:1240px;margin:0 auto;padding:0 max(5vw,16px)}
 .top{background:var(--field);color:#fff;padding:clamp(28px,5vw,64px) 0 clamp(28px,4vw,48px)}
+.brand{margin:0 0 22px;font:900 22px Archivo,sans-serif;letter-spacing:-.01em}.brand span{display:block;font:500 15px Inter,sans-serif;opacity:.85;margin-top:2px}
 .top h1{margin:0;font-size:clamp(32px,5.2vw,52px);line-height:1.05;font-weight:900;text-wrap:balance;max-width:19ch}
 .top p.lede{margin:14px 0 0;max-width:60ch;font-size:17px;opacity:.92}
 .cta{display:flex;gap:10px;flex-wrap:wrap;margin-top:24px}
@@ -140,6 +141,7 @@ body[data-mode=landing] #appband{display:none}
 
 <header class="top mk">
  <div class="wrap">
+  <p class="brand">PlateFirst<span>Food first. Then only the supplements worth taking.</span></p>
   <h1>Know which supplements are worth it for how you move and think.</h1>
   <p class="lede">Seven questions. A free preview of your top focus areas. Then a full report graded by the strength of the research, with the foods, weekly activity plan and daily schedule that make them work, screened against your medicines and conditions.</p>
   <div class="cta"><button class="btn big" data-start>Start free: answer 7 questions</button><a class="btn big ghost" href="#sample">See a sample report</a></div>
@@ -245,7 +247,7 @@ body[data-mode=landing] #appband{display:none}
   <li><b>Low mood</b>A support message and the 9-8-8 crisis line come first when answers suggest it.</li>
   <li><b>Drug-tested athletes</b>Advice to use only batch-tested products (NSF Certified for Sport, Informed Sport).</li>
  </ul>
- <div class="info" style="margin-top:20px"><strong>Educational, not medical advice.</strong> Supplement Check does not diagnose or treat anything and does not replace your doctor, pharmacist or dietitian. Amounts shown are those used in research on healthy adults. Take your report to a professional before starting anything new, especially if you take medicines.</div>
+ <div class="info" style="margin-top:20px"><strong>Educational, not medical advice.</strong> PlateFirst does not diagnose or treat anything and does not replace your doctor, pharmacist or dietitian. Amounts shown are those used in research on healthy adults. Take your report to a professional before starting anything new, especially if you take medicines.</div>
 </div></section>
 
 <section class="band mk"><div class="wrap">
@@ -296,7 +298,7 @@ body[data-mode=landing] #appband{display:none}
 </div></section>
 
 <footer><div class="wrap">
- <p>Supplement Check is an educational tool and does not provide medical advice, diagnosis or treatment. If you are in crisis, call or text 9-8-8 (Canada) or your local emergency number.</p>
+ <p>PlateFirst is an educational tool and does not provide medical advice, diagnosis or treatment. If you are in crisis, call or text 9-8-8 (Canada) or your local emergency number.</p>
  <p><a href="privacy.html">Privacy policy</a> · <a href="refund.html">Refund policy</a></p>
 </div></footer>
 
@@ -406,7 +408,7 @@ function full(j){
   app.innerHTML=`<div class="view">
   ${R.lowMood?`<div class="alert"><strong>Your mood answers matter more than any supplement</strong>Feeling down most days for two weeks is worth talking to a doctor about; effective help exists. If you ever feel unsafe or think about ending your life, call or text 9-8-8, any time.</div>`:''}
   ${R.tested?`<div class="info"><strong>Drug-tested athlete:</strong> use only batch-tested products (NSF Certified for Sport or Informed Sport). Even then, risk is never zero; you remain responsible for what you take.</div>`:''}
-  <div class="rh"><h2>Your Supplement Check report</h2><p class="sub">Focus: ${R.focusAreas.map(esc).join(', ')} · Generated ${new Date().toLocaleDateString('en-CA',{year:'numeric',month:'long',day:'numeric'})}</p></div>
+  <div class="rh"><h2>Your PlateFirst report</h2><p class="sub">Focus: ${R.focusAreas.map(esc).join(', ')} · Generated ${new Date().toLocaleDateString('en-CA',{year:'numeric',month:'long',day:'numeric'})}</p></div>
   <div class="tools noprint">
    <button class="btn" id="print">Print or save as PDF</button>
    <button class="btn ghost" id="ics">Add a 6-week re-check to my calendar</button>
@@ -426,20 +428,20 @@ function full(j){
   <div class="sec"><h2>Build your plate</h2><ul class="cards">${R.plate.map(([t,d])=>`<li><b>${esc(t)}</b>${esc(d)}</li>`).join('')}</ul></div>
   <div class="sec"><h2>Foundations that work better than pills</h2><ul class="cards">${R.foundations.map(([t,d])=>`<li><b>${esc(t)}</b>${esc(d)}</li>`).join('')}</ul></div>
   <div class="sec"><h2>Buying in Canada</h2><ul class="cards"><li><b>Check for an NPN</b>Choose products with an 8-digit NPN or DIN-HM on the label, which shows Health Canada has licensed them.</li><li><b>Usually not worth the money</b>BCAAs if you eat enough protein, glutamine for performance, “testosterone boosters”, fat burners and proprietary blends that hide amounts.</li></ul></div>
-  <div class="sec noprint"><h2>Help improve Supplement Check</h2><p>Optionally send your answers anonymously for research. No name, email or contact details are included.</p><button class="btn ghost" id="send">Send anonymously</button> <span id="sendmsg" class="note"></span></div>
+  <div class="sec noprint"><h2>Help improve PlateFirst</h2><p>Optionally send your answers anonymously for research. No name, email or contact details are included.</p><button class="btn ghost" id="send">Send anonymously</button> <span id="sendmsg" class="note"></span></div>
   <div class="sec noprint"><h2>Your data</h2><p class="note">Your report is kept so your private link keeps working. You can delete it at any time; this cannot be undone.</p><button class="btn ghost" id="del">Delete my report</button></div>
   <p class="note" style="margin-top:30px">Evidence grades draw on the IOC 2018 consensus on dietary supplements, the Australian Institute of Sport framework and ISSN position stands. Amounts are those used in research on healthy adults, not prescriptions. This report is educational and is not medical advice; review it with your doctor, pharmacist or dietitian.</p>
   </div>`;
 }
-function summary(){const R=last.report;return['Supplement Check summary (educational, not medical advice)','Goals: '+R.focusAreas.join(', '),'Conditions: '+((A.cond||[]).join(', ')||'none'),'Medicines: '+((A.meds||[]).join(', ')||'none'),'Pregnant/breastfeeding: '+(A.preg||'not answered'),'',
+function summary(){const R=last.report;return['PlateFirst summary (educational, not medical advice)','Goals: '+R.focusAreas.join(', '),'Conditions: '+((A.cond||[]).join(', ')||'none'),'Medicines: '+((A.meds||[]).join(', ')||'none'),'Pregnant/breastfeeding: '+(A.preg||'not answered'),'',
  'Options to discuss:',...R.top.concat(R.more).map(p=>`- ${p.n} (${p.grade} evidence): ${p.dose}${p.warn.length?' Notes: '+p.warn.join(' '):''}`),'','Left out for safety:',...(R.left.length?R.left.map(p=>`- ${p.n}: ${p.out}`):['- none']),'',
  'Weekly plan: '+R.week.wk.map((s,i)=>['Mon','Tue','Wed','Thu','Fri','Sat','Sun'][i]+' '+s.t).join('; ')].join('\n')}
 function ics(){
   const d=new Date(Date.now()+42*864e5);d.setHours(9,0,0,0);const e=new Date(d.getTime()+15*6e4);
   const f=x=>x.toISOString().replace(/[-:]/g,'').replace(/\.\d{3}/,'');
-  const txt=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Supplement Check//EN','BEGIN:VEVENT','UID:'+cur.id+'@supplement-check','DTSTAMP:'+f(new Date()),'DTSTART:'+f(d),'DTEND:'+f(e),
-   'SUMMARY:Re-check your Supplement Check report','DESCRIPTION:Six weeks in: update your answers for a fresh report (free for 90 days). '+link(),'URL:'+link(),'END:VEVENT','END:VCALENDAR'].join('\r\n');
-  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([txt],{type:'text/calendar'}));a.download='supplement-check-recheck.ics';document.body.appendChild(a);a.click();a.remove();
+  const txt=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//PlateFirst//EN','BEGIN:VEVENT','UID:'+cur.id+'@platefirst.ca','DTSTAMP:'+f(new Date()),'DTSTART:'+f(d),'DTEND:'+f(e),
+   'SUMMARY:Re-check your PlateFirst report','DESCRIPTION:Six weeks in: update your answers for a fresh report (free for 90 days). '+link(),'URL:'+link(),'END:VEVENT','END:VCALENDAR'].join('\r\n');
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([txt],{type:'text/calendar'}));a.download='platefirst-recheck.ics';document.body.appendChild(a);a.click();a.remove();
 }
 function copy(text,btn,label){navigator.clipboard.writeText(text).then(()=>{btn.textContent='Copied'},()=>{btn.textContent='Copy failed: select the address bar instead'});setTimeout(()=>btn.textContent=label,2500)}
 
