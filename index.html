@@ -61,6 +61,19 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--warn);outline-o
 .found{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,260px),1fr));gap:12px;padding:0;margin:0;list-style:none}
 .found li{background:var(--soft);padding:14px 16px;border-radius:12px}.found b{display:block;font-family:Archivo,sans-serif}
 .skip{padding-left:20px}.skip li{margin:6px 0}
+
+.week{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px}
+.day{border:2px solid var(--line);padding:10px;display:flex;flex-direction:column;gap:4px}
+.day .dn{font-family:Archivo,sans-serif;font-weight:900;font-size:15px}
+.day .dt{font-weight:600;font-size:15px;line-height:1.25}.day .dx{font-size:13px;color:var(--mute);line-height:1.4}
+.day.rest{border-style:dashed}.day.hard{background:var(--field);border-color:var(--field);color:#fff}.day.hard .dx{color:rgba(255,255,255,.85)}
+.tl{list-style:none;padding:0;margin:0;max-width:860px}
+.tl li{display:grid;grid-template-columns:5.5em minmax(0,1fr);gap:16px;padding:12px 0;border-top:1px solid var(--hair)}
+.tl time{font-family:Archivo,sans-serif;font-weight:900;font-size:22px;white-space:nowrap}
+.tl b{display:block}.tl .sup{color:var(--ok);font-weight:600;font-size:15px;margin-top:4px}
+.plan-note{color:var(--mute);margin:10px 0 0;max-width:70ch;font-size:15px}
+@media(max-width:900px){.week{grid-template-columns:repeat(auto-fill,minmax(min(100%,150px),1fr))}}
+@media(max-width:600px){.tl li{grid-template-columns:4.2em minmax(0,1fr);gap:10px}.tl time{font-size:18px}}
 @media(max-width:600px){.row{grid-template-columns:1fr;gap:0}.panel h3{font-size:23px}}
 @media(prefers-reduced-motion:no-preference){.q,.res{animation:in .35s ease}@keyframes in{from{opacity:0;transform:translateY(8px)}}}
 </style>
@@ -68,7 +81,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--warn);outline-o
 <body>
 <header class="top">
   <h1>Could a supplement help you move and think better?</h1>
-  <p>Seven short questions. You get options graded by the strength of the research, studied amounts, and the safety checks that apply to you.</p>
+  <p>Seven short questions. You get options graded by the strength of the research, the foods that back them up, a weekly activity plan and a daily schedule, plus the safety checks that apply to you.</p>
   <div class="rail" id="rail"></div>
 </header>
 <main id="app"></main>
@@ -200,6 +213,92 @@ const S=[
  chk:()=>({out:null,w:(has('cond','diab')||has('meds','dm'))?['Contains sugar; count it in your carbs.']:[]})}
 ];
 const GR=['','Emerging','Moderate','Strong'];
+const FOOD={
+creatine:'Take with a meal that has carbs and protein; this may slightly improve uptake. Red meat and fish supply about 1–2 g a day, so vegetarians often start lower and respond more.',
+caffeine:'Coffee or tea counts toward the total. A light carb snack (banana, toast) alongside reduces jitters and stomach upset.',
+betaal:'Take with meals; loading works better that way. Chicken, turkey, beef and fish contain carnosine naturally.',
+nitrate:'Food sources: beetroot, arugula, spinach, celery and lettuce. A big leafy salad at lunch adds to the effect.',
+bicarb:'Take with a carb-rich meal (rice, pasta, toast) to cut stomach upset.',
+protein:'Food first: eggs, Greek yogurt, chicken, fish, tofu, tempeh, lentils. Aim for 20–40 g at each meal, every 3–4 hours.',
+vitd:'Take with a meal that contains fat. Food sources: salmon, trout, sardines, eggs, and milk or plant milks with added vitamin D.',
+iron:'Pair with vitamin C (orange, kiwi, peppers, strawberries). Keep tea, coffee and dairy 1–2 hours away. Food sources: red meat, lentils, chickpeas, tofu, fortified cereal.',
+b12:'Food sources: fish, eggs, dairy, and for vegans fortified plant milk and nutritional yeast.',
+omega3:'Take with a meal that contains fat. Eat fatty fish twice a week (salmon, sardines, mackerel, trout). Walnuts, chia and flax add plant omega-3, which converts poorly.',
+theanine:'Green tea naturally contains both theanine and caffeine.',
+mag:'Food sources: pumpkin seeds, almonds, cashews, spinach, black beans, oats and dark chocolate. Take the supplement with dinner.',
+melatonin:'Finish heavy meals and alcohol 2–3 hours before bed. Tart cherries and kiwi before bed showed small sleep benefits in early studies.',
+ashwa:'Take with a meal to reduce stomach upset.',
+rhodiola:'Take in the morning before breakfast; taken late in the day it can disturb sleep.',
+saffron:'A Mediterranean-style diet (olive oil, legumes, vegetables, fish, nuts) has been linked to better mood in trials.',
+lytes:'Salty snacks, broth and sports drinks replace sodium. Bananas, potatoes and yogurt add potassium.',
+collagen:'The vitamin C can come from food: an orange or kiwi. Bone broth and gelatin desserts contain collagen.',
+cherry:'Fresh or frozen tart cherries work too, but concentrate is easier to dose. It counts as a fruit portion.'};
+const SESS={
+S:['Strength, full body','3 sets of 8–12: squat or sit-to-stand, push-up, row, hip hinge, carry. Stop 2 reps before failure.',1],
+E:['Easy cardio 30–45 min','Brisk walk, bike, jog or swim at a pace you can still talk at.',0],
+I:['Intervals','10 min warm-up, then 6–8 rounds of 1 min hard and 2 min easy.',1],
+P:['Sprints and power','Warm up, then 6–10 sprints of 10–20 s with full recovery. Add jumps or throws.',1],
+L:['Long easy session 60–90 min','Steady and conversational. Practise your race-day fuelling and fluids.',1],
+T:['Your sport, or HIIT','A game, practice or class. Count it as a hard day.',1],
+W:['Brisk walk 30 min','Steps add up: aim for 7,000–10,000 across the day.',0],
+M:['Yoga or mobility 20–30 min','Hips, upper back and ankles. End with 5 min of slow breathing, exhaling longer than you inhale.',0],
+R:['Rest','A gentle walk is fine. Rest days are when training turns into fitness.',-1]};
+function plan(){
+  const g=k=>has('goals',k);
+  const focus=g('strength')?'strength':g('endurance')||has('acts','endurance')?'endurance':g('sprint')||has('acts','team')||has('acts','hiit')?'sprint':'general';
+  const T={strength:[['S',1],['W',5],['S',2],['M',6],['S',3],['E',4],['R',9]],
+   endurance:[['E',2],['S',3],['I',4],['E',6],['S',5],['L',1],['R',9]],
+   sprint:[['S',2],['E',5],['P',1],['M',6],['S',3],['T',4],['R',9]],
+   general:[['W',1],['S',2],['W',4],['M',5],['S',3],['E',6],['R',9]]}[focus];
+  const n={'0':3,'2':4,'4':5,'6':6}[A.freq]||4;
+  const keep=T.map(x=>x[1]).sort((a,b)=>a-b).slice(0,n);
+  let wk=T.map(([t,p])=>keep.includes(p)?t:(p===9?'R':'W'));
+  if(has('acts','team')&&focus!=='sprint'){const i=wk.indexOf('E');if(i>=0)wk[i]='T'}
+  if(focus==='strength'&&g('endurance')){const i=wk.indexOf('W');if(i>=0)wk[i]='E'}
+  const notes=[];
+  if(A.age==='u18')notes.push('Under 18: aim for at least 60 minutes of activity every day, including vigorous play or sport three days a week.');
+  else if(wk.filter(t=>t==='S').length>=2)notes.push('This meets the adult guideline of at least 150 minutes of moderate to vigorous activity a week, with strength work at least twice.');
+  else notes.push('The adult guideline is 150 minutes of moderate to vigorous activity a week plus strength work twice; add a second short strength session when you can.');
+  if(A.freq==='0')notes.push('New to this? For the first two weeks do half of each session, then add about 10% a week.');
+  if(A.age==='65')notes.push('Add 10 minutes of balance work (single-leg stands, heel-to-toe walking) on three days.');
+  if(A.preg==='y'||has('cond','heart')||has('cond','bp'))notes.push('Get the go-ahead from your clinician before starting hard sessions.');
+  if(g('mood')||g('stress'))notes.push('Exercise itself has strong evidence for mood and stress; outdoor sessions count double for many people.');
+  return{focus,wk,notes};
+}
+function day(P){
+  const has_=id=>P.has(id),L=[],sleepCare=has('goals','sleep')||A.sleepq==='poor';
+  const sup=a=>a.filter(Boolean).join(' ');
+  L.push(['7:00','Wake and get daylight','10 minutes outside within an hour of waking sets your body clock for focus by day and sleep at night.',
+    sup([has_('rhodiola')&&'Rhodiola: take now, before breakfast.'])]);
+  L.push(['7:30','Breakfast with protein','25–40 g protein (eggs, Greek yogurt, tofu scramble) plus fruit and whole grains.',
+    sup([has_('creatine')&&'Creatine: with this or any meal, same time daily.',(has_('vitd')||has_('omega3'))&&`${[has_('vitd')&&'Vitamin D',has_('omega3')&&(has_('vitd')?'omega-3':'Omega-3')].filter(Boolean).join(' and ')}: with this meal; fat helps absorption.`,
+     has_('b12')&&'B12: any time, with or without food.',has_('iron')&&'Iron: as your clinician advises, away from coffee, tea and dairy, ideally with orange or kiwi.',
+     has_('theanine')&&'L-theanine with caffeine: for a focused morning, or with your first coffee.',has_('betaal')&&'Beta-alanine: first split dose with this meal.'])]);
+  L.push(['10:30','Movement break','Stand up and walk for 5 minutes for every hour of sitting.','']);
+  L.push(['12:30','Lunch','Protein, whole grains and a big portion of leafy greens or beetroot.',
+    sup([has_('nitrate')&&'Beetroot shot: 2–3 hours before training.',has_('bicarb')&&'Sodium bicarbonate: 1–3 hours before a hard session, with this meal.',has_('betaal')&&'Beta-alanine: second split dose.'])]);
+  const tr=sleepCare?'16:00':'17:00';
+  L.push([tr==='16:00'?'15:00':'16:00','Before training','A small carb snack if it has been over 3 hours since lunch: banana, toast, yogurt.',
+    sup([has_('caffeine')&&(sleepCare?'Caffeine: only if training before about 3 pm; later doses can cost you sleep.':'Caffeine: about 60 minutes before.'),has_('collagen')&&'Collagen with vitamin C: 30–60 minutes before.'])]);
+  L.push([tr,"Today's session","Follow the day's session in your weekly plan.",sup([has_('lytes')&&'Electrolytes: during sessions over 60–90 minutes or in heat.'])]);
+  L.push([tr==='16:00'?'17:30':'18:30','Recovery meal or shake','20–40 g protein with carbs within about 2 hours of training.',
+    sup([has_('protein')&&'Protein powder: here, if food falls short.'])]);
+  L.push(['19:00','Dinner','Protein, vegetables and some olive oil or nuts. Keep alcohol low; it disrupts recovery and sleep.',
+    sup([has_('mag')&&'Magnesium: with dinner.',has_('ashwa')&&'Ashwagandha: with dinner.',has_('cherry')&&'Tart cherry: second serving.',has_('betaal')&&'Beta-alanine: last split dose.'])]);
+  L.push(['21:30','Wind down','Dim lights and screens. 10 minutes of stretching or slow breathing.',
+    sup([has_('melatonin')&&'Melatonin: 30–60 minutes before bed.'])]);
+  L.push(['22:30','Sleep','7–9 hours. Keep the room dark, cool and quiet, and wake at the same time daily.','']);
+  return L;
+}
+function plate(){const f=[['Protein at every meal','20–40 g each time, spread across 3–4 meals.']];
+  f.push(['Carbs around training',(has('goals','endurance')||A.long==='l')?'Oats, rice, potatoes, pasta and fruit before and after sessions; more on long or hard days.':'Whole grains, potatoes and fruit, timed before and after training.']);
+  f.push(['Colour every day','Berries, leafy greens, beets and peppers for vitamin C, nitrate and fibre.']);
+  f.push(['Fatty fish twice a week',A.diet==='vegan'?'Vegan: algae oil, plus walnuts, chia and flax.':A.diet==='veg'?'If you eat fish, salmon or sardines; otherwise algae oil, walnuts, chia and flax.':'Salmon, sardines, trout or mackerel.']);
+  f.push(['Calcium for bones','Dairy, or plant milks and tofu with added calcium.']);
+  if(has('goals','mood')||has('goals','stress')||has('goals','focus'))f.push(['Mediterranean pattern for the mind','Olive oil, legumes, nuts, vegetables and fish; linked to better mood in trials.']);
+  f.push(['Fluids','Drink to thirst and aim for pale-yellow urine. About 500 mL in the 2 hours before training.']);
+  return f}
+
 
 function drawRail(){rail.innerHTML=steps.map((_,i)=>`<i class="${i<=step?'on':''}"></i>`).join('')+`<i class="${step>=steps.length?'on':''}"></i>`}
 function opts(f){return`<div class="opts" role="group" aria-label="${f.label||steps[step].t}">${f.o.map(([v,l])=>{const on=f.type==='multi'?has(f.id,v):A[f.id]===v;return`<button type="button" class="opt" data-f="${f.id}" data-v="${v}" aria-pressed="${on}">${l}</button>`}).join('')}</div>`}
@@ -252,6 +351,7 @@ function panel(p){return`<article class="panel ${p.out?'out':''}"><h3>${p.s.n}</
  ${p.out?`<div class="row"><span class="lab">Left out</span><span class="flag">${p.out}</span></div>`:`
  <div class="row"><span class="lab">What it does</span><span>${p.s.why}</span></div>
  <div class="row"><span class="lab">Studied amount</span><span>${p.s.dose()}</span></div>
+ ${FOOD[p.s.id]?`<div class="row"><span class="lab">Pair with food</span><span>${FOOD[p.s.id]}</span></div>`:''}
  ${p.w.length?`<div class="row"><span class="lab">Check first</span><span class="flag">${p.w.join(' ')}</span></div>`:''}`}</article>`}
 function foundations(){const f=[];
  f.push(['Sleep',A.sleepq==='poor'?'Poor sleep blunts every supplement here. A fixed wake time and a dark, cool room come first.':'7–9 hours keeps recovery, mood and focus on track.']);
@@ -261,7 +361,7 @@ function foundations(){const f=[];
  if(A.long==='l')f.push(['Fuel long sessions','Carbohydrate during sessions over 90 minutes beats any supplement for endurance.']);
  return f}
 function summary(){score();return['Supplement Check summary (educational, not medical advice)','Goals: '+(A.goals||[]).join(', '),'Conditions: '+((A.cond||[]).join(', ')||'none'),'Medicines: '+((A.meds||[]).join(', ')||'none'),'Pregnant/breastfeeding: '+(A.preg||'not answered'),'',
- 'Options to discuss:',...picked.map(p=>`- ${p.s.n} (${GR[p.s.gr]} evidence): ${p.s.dose()}${p.w.length?' Notes: '+p.w.join(' '):''}`),'','Left out for safety:',...(left.length?left.map(p=>`- ${p.s.n}: ${p.out}`):['- none'])].join('\n')}
+ 'Options to discuss:',...picked.map(p=>`- ${p.s.n} (${GR[p.s.gr]} evidence): ${p.s.dose()}${FOOD[p.s.id]?' Food: '+FOOD[p.s.id]:''}${p.w.length?' Notes: '+p.w.join(' '):''}`),'','Weekly activity plan: '+plan().wk.map((t,i)=>['Mon','Tue','Wed','Thu','Fri','Sat','Sun'][i]+' '+SESS[t][0]).join('; '),'','Left out for safety:',...(left.length?left.map(p=>`- ${p.s.n}: ${p.out}`):['- none'])].join('\n')}
 function send(btn){
   const msg=document.getElementById('sendmsg');btn.disabled=true;msg.textContent='Sending…';
   const {unit,...ans}=A;
@@ -283,6 +383,13 @@ function results(){
   <div class="grid">${top.map(panel).join('')}</div>
   ${more.length?`<div class="sec"><h2>Also relevant, lower priority</h2><div class="grid">${more.map(panel).join('')}</div></div>`:''}
   ${left.length?`<div class="sec"><h2>Left out for your safety</h2><div class="grid">${left.map(panel).join('')}</div></div>`:''}`}
+  ${(()=>{const pl=plan(),P=new Set(minor?[]:top.concat(more).map(p=>p.s.id)),D=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+   return`<div class="sec"><h2>Your week of activity</h2><p class="plan-note" style="margin:0 0 14px">Built around ${{strength:'strength',endurance:'endurance',sprint:'power and sport',general:'everyday health'}[pl.focus]} and ${({'0':3,'2':4,'4':5,'6':6}[A.freq]||4)} active days. Shaded days are hard days; supplements such as caffeine, beetroot and bicarbonate matter most on those.</p>
+   <div class="week">${pl.wk.map((t,i)=>{const s=SESS[t];return`<div class="day ${s[2]>0?'hard':s[2]<0?'rest':''}"><span class="dn">${D[i]}</span><span class="dt">${s[0]}</span><span class="dx">${s[1]}</span></div>`}).join('')}</div>
+   ${pl.notes.map(n=>`<p class="plan-note">${n}</p>`).join('')}</div>
+   <div class="sec"><h2>A day that gets the most from them</h2><p class="plan-note" style="margin:0 0 10px">Shift the times to suit your day; the order and spacing are what matter.${minor?'':' Supplement timing is shown only for the options suggested above.'}</p>
+   <ol class="tl">${day(P).map(([t,h,d,x])=>`<li><time>${t}</time><div><b>${h}</b>${d}${x?`<div class="sup">${x}</div>`:''}</div></li>`).join('')}</ol></div>
+   <div class="sec"><h2>Build your plate</h2><ul class="found">${plate().map(([t,d])=>`<li><b>${t}</b>${d}</li>`).join('')}</ul></div>`})()}
   <div class="sec"><h2>Foundations that work better</h2><ul class="found">${foundations().map(([t,d])=>`<li><b>${t}</b>${d}</li>`).join('')}</ul></div>
   <div class="sec"><h2>Usually not worth the money</h2><ul class="skip"><li><b>BCAAs</b> if you already eat enough protein.</li><li><b>Glutamine</b> for performance or muscle gain.</li><li><b>“Testosterone boosters”</b> and <b>fat burners</b>: little evidence, frequent contamination.</li><li><b>Proprietary blends</b> that hide the amount of each ingredient.</li></ul></div>
   ${SUPA_URL&&SUPA_KEY?`<div class="sec"><h2>Help improve this app</h2><p>Send your answers anonymously to the app's creator. No name, email or contact details are included. This is optional.</p><button class="btn" id="send">Send my answers anonymously</button> <span id="sendmsg" class="note"></span></div>`:''}
