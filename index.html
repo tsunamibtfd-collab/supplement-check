@@ -1,402 +1,503 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-CA">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Supplement Check</title>
+<meta name="description" content="Seven questions, a free preview, and an evidence-graded supplement, food and activity report for active Canadians.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 /* VOICE: calm, clinical, honest; evidence before hype
    IDEA: a supplement-facts label: heavy rules, plain rows, nothing hidden
-   PICTURE: the questionnaire itself, then results printed as facts panels
+   PICTURE: a real sample report you can scroll before answering anything
    COLOUR and TYPE: white ground, cobalt field, coral for cautions; Archivo 900 labels + Inter body
-   LAYOUT: one calm column, progress rail on top, results as a grid of panels */
+   LAYOUT: hero, sample, why it works, trust, price; then one calm app column */
 :root{color-scheme:light dark;
 --bg:light-dark(#ffffff,#0b1020);--ink:light-dark(#0d1530,#eef1fb);--mute:light-dark(#4c5675,#a8b0cc);
---field:light-dark(#1f4fd8,#16307e);--onfield:#ffffff;--soft:light-dark(#eef2ff,#141c38);--line:light-dark(#0d1530,#dfe5f7);
+--field:light-dark(#1f4fd8,#16307e);--soft:light-dark(#eef2ff,#141c38);--line:light-dark(#0d1530,#dfe5f7);
 --hair:light-dark(#d5dbec,#2a3458);--warn:light-dark(#c2361a,#ff8a6e);--warnbg:light-dark(#fff1ec,#2b1612);--ok:light-dark(#1f4fd8,#8fb0ff)}
 :root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
 *{box-sizing:border-box;min-width:0}
 body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Inter,system-ui,sans-serif;overflow-x:clip}
 h1,h2,h3,.lab{font-family:Archivo,Inter,sans-serif}
-.top{background:var(--field);color:var(--onfield);padding:clamp(22px,4vw,44px) max(5vw,16px) 26px}
-.top h1{margin:0;font-size:clamp(30px,5vw,46px);line-height:1.05;font-weight:900;text-wrap:balance;max-width:20ch}
-.top p{margin:10px 0 0;max-width:62ch;opacity:.9}
-.rail{display:flex;gap:6px;margin-top:22px}.rail i{flex:1;height:6px;border-radius:3px;background:rgba(255,255,255,.28)}.rail i.on{background:#fff}
-main{max-width:1240px;margin:0 auto;padding:clamp(24px,4vw,48px) max(5vw,16px) 64px}
-.q{max-width:720px}
-.q h2{font-size:clamp(26px,3.6vw,34px);line-height:1.1;margin:0 0 6px;text-wrap:balance}
-.q .sub{color:var(--mute);margin:0 0 18px}
-.fld{margin:22px 0 0}.fld>.lab{display:block;font-weight:700;font-size:17px;margin-bottom:10px}
-.opts{display:flex;flex-wrap:wrap;gap:8px}
-.opt{font:inherit;font-size:16px;min-height:44px;padding:9px 16px;border-radius:999px;border:1.5px solid var(--hair);background:transparent;color:var(--ink);cursor:pointer;text-align:left}
-.opt:hover{border-color:var(--ok)}
-.opt[aria-pressed=true]{background:var(--field);border-color:var(--field);color:#fff}
-button:focus-visible,input:focus-visible{outline:3px solid var(--warn);outline-offset:2px}
-.num{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-.num input{font:inherit;font-size:16px;width:130px;min-height:44px;padding:8px 12px;border-radius:10px;border:1.5px solid var(--hair);background:var(--bg);color:var(--ink)}
-.nav{display:flex;gap:10px;margin-top:34px;align-items:center;flex-wrap:wrap}
-.btn{font:600 16px Inter,sans-serif;min-height:46px;padding:10px 22px;border-radius:10px;border:0;background:var(--field);color:#fff;cursor:pointer}
+a{color:var(--ok)}
+.wrap{max-width:1240px;margin:0 auto;padding:0 max(5vw,16px)}
+.top{background:var(--field);color:#fff;padding:clamp(28px,5vw,64px) 0 clamp(28px,4vw,48px)}
+.top h1{margin:0;font-size:clamp(32px,5.2vw,52px);line-height:1.05;font-weight:900;text-wrap:balance;max-width:19ch}
+.top p.lede{margin:14px 0 0;max-width:60ch;font-size:17px;opacity:.92}
+.cta{display:flex;gap:10px;flex-wrap:wrap;margin-top:24px}
+.trust{display:flex;flex-wrap:wrap;gap:8px 22px;margin:22px 0 0;padding:0;list-style:none;font-size:15px;opacity:.92}
+.trust li::before{content:"";display:inline-block;width:8px;height:8px;border-radius:2px;background:#fff;margin-right:8px;vertical-align:middle}
+.btn{font:600 16px Inter,sans-serif;min-height:46px;padding:10px 22px;border-radius:10px;border:0;background:var(--field);color:#fff;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center}
+.top .btn{background:#fff;color:#1f4fd8}.top .btn.ghost{background:transparent;color:#fff;border:1.5px solid rgba(255,255,255,.6)}
 .btn.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--hair)}
-.btn[disabled]{opacity:.4;cursor:not-allowed}
-.err{color:var(--warn);font-weight:600}
-.note{font-size:14px;color:var(--mute);margin-top:26px;max-width:70ch}
-.alert{border-left:6px solid var(--warn);background:var(--warnbg);padding:16px 18px;border-radius:0 12px 12px 0;margin:0 0 22px;max-width:860px}
-.alert strong{display:block;font-family:Archivo,sans-serif;font-size:18px;margin-bottom:4px}
-.info{border-left:6px solid var(--ok);background:var(--soft);padding:16px 18px;border-radius:0 12px 12px 0;margin:0 0 22px;max-width:860px}
-.rh{display:flex;justify-content:space-between;align-items:end;gap:16px;flex-wrap:wrap;margin-bottom:22px}
-.rh h2{font-size:clamp(28px,4vw,40px);line-height:1.05;margin:0;text-wrap:balance;max-width:22ch}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,340px),1fr));gap:20px}
-.panel{border:2px solid var(--line);padding:14px 16px 16px;background:var(--bg)}
-.panel h3{margin:0;font-size:26px;font-weight:900;line-height:1.1}
+.btn.big{min-height:54px;font-size:17px;padding:12px 28px}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid var(--warn);outline-offset:2px}
+section.band{padding:clamp(36px,5vw,72px) 0;border-bottom:1px solid var(--hair)}
+.band h2{font-size:clamp(28px,3.8vw,40px);line-height:1.08;margin:0 0 10px;text-wrap:balance;max-width:24ch}
+.band .intro{color:var(--mute);max-width:66ch;margin:0 0 24px}
+.steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin:0;padding:0;list-style:none;counter-reset:s}
+.steps li{border-top:8px solid var(--line);padding-top:12px}.steps b{display:block;font-family:Archivo,sans-serif;font-size:19px}
+/* sample report frame */
+.sample{border:2px solid var(--line);max-height:680px;overflow:auto;position:relative;background:var(--bg)}
+.sample .tag{position:sticky;top:0;z-index:2;background:var(--line);color:var(--bg);font:700 14px Archivo,sans-serif;padding:8px 14px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.sample .inner{padding:18px}
+.persona{background:var(--soft);padding:12px 14px;border-radius:10px;margin-bottom:16px;font-size:15px}
+/* label panels */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,330px),1fr));gap:18px}
+.panel{border:2px solid var(--line);padding:14px 16px 16px;background:var(--bg);break-inside:avoid}
+.panel h3{margin:0;font-size:25px;font-weight:900;line-height:1.1}
 .panel .kind{font-size:14px;color:var(--mute);margin:2px 0 8px}
-.rule{height:8px;background:var(--line);margin:8px -2px}.thin{height:1px;background:var(--line);margin:6px 0}
-.row{display:grid;grid-template-columns:7.2em minmax(0,1fr);gap:10px;padding:6px 0;border-bottom:1px solid var(--hair);font-size:15px}
+.rule{height:8px;background:var(--line);margin:8px -2px}
+.row{display:grid;grid-template-columns:7.4em minmax(0,1fr);gap:10px;padding:6px 0;border-bottom:1px solid var(--hair);font-size:15px}
 .row:last-child{border-bottom:0}.row .lab{font-weight:700}
 .pips{display:inline-flex;gap:4px;vertical-align:middle;margin-right:8px}.pips b{width:14px;height:14px;border:2px solid var(--ok);border-radius:3px}.pips b.f{background:var(--ok)}
 .flag{color:var(--warn);font-weight:600}
-.panel.out{opacity:.85;border-style:dashed}
-.sec{margin-top:44px}.sec h2{font-size:26px;margin:0 0 12px}
-.found{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,260px),1fr));gap:12px;padding:0;margin:0;list-style:none}
-.found li{background:var(--soft);padding:14px 16px;border-radius:12px}.found b{display:block;font-family:Archivo,sans-serif}
-.skip{padding-left:20px}.skip li{margin:6px 0}
-
+.panel.out{border-style:dashed}
+.sub2{font:700 20px Archivo,sans-serif;margin:26px 0 10px}
+/* week + day */
 .week{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px}
-.day{border:2px solid var(--line);padding:10px;display:flex;flex-direction:column;gap:4px}
+.day{border:2px solid var(--line);padding:10px;display:flex;flex-direction:column;gap:4px;break-inside:avoid}
 .day .dn{font-family:Archivo,sans-serif;font-weight:900;font-size:15px}
 .day .dt{font-weight:600;font-size:15px;line-height:1.25}.day .dx{font-size:13px;color:var(--mute);line-height:1.4}
 .day.rest{border-style:dashed}.day.hard{background:var(--field);border-color:var(--field);color:#fff}.day.hard .dx{color:rgba(255,255,255,.85)}
 .tl{list-style:none;padding:0;margin:0;max-width:860px}
-.tl li{display:grid;grid-template-columns:5.5em minmax(0,1fr);gap:16px;padding:12px 0;border-top:1px solid var(--hair)}
+.tl li{display:grid;grid-template-columns:5.5em minmax(0,1fr);gap:16px;padding:12px 0;border-top:1px solid var(--hair);break-inside:avoid}
 .tl time{font-family:Archivo,sans-serif;font-weight:900;font-size:22px;white-space:nowrap}
 .tl b{display:block}.tl .sup{color:var(--ok);font-weight:600;font-size:15px;margin-top:4px}
+.note{font-size:14px;color:var(--mute);max-width:72ch}
 .plan-note{color:var(--mute);margin:10px 0 0;max-width:70ch;font-size:15px}
-@media(max-width:900px){.week{grid-template-columns:repeat(auto-fill,minmax(min(100%,150px),1fr))}}
-@media(max-width:600px){.tl li{grid-template-columns:4.2em minmax(0,1fr);gap:10px}.tl time{font-size:18px}}
-@media(max-width:600px){.row{grid-template-columns:1fr;gap:0}.panel h3{font-size:23px}}
-@media(prefers-reduced-motion:no-preference){.q,.res{animation:in .35s ease}@keyframes in{from{opacity:0;transform:translateY(8px)}}}
+/* tables */
+table{border-collapse:collapse;width:100%;font-size:15px}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--hair);vertical-align:top}
+thead th{border-bottom:3px solid var(--line);font-family:Archivo,sans-serif}
+td.num{text-align:right;white-space:nowrap;font-weight:600}
+.scroll{overflow-x:auto}
+/* cards */
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,270px),1fr));gap:14px;padding:0;margin:0;list-style:none}
+.cards li{background:var(--soft);padding:16px;border-radius:12px}.cards b{display:block;font-family:Archivo,sans-serif;font-size:17px;margin-bottom:4px}
+.grade{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.grade div{border:2px solid var(--line);padding:16px}.grade h3{margin:6px 0 6px;font-size:22px}
+.alert{border-left:6px solid var(--warn);background:var(--warnbg);padding:16px 18px;border-radius:0 12px 12px 0;margin:0 0 20px;max-width:880px}
+.alert strong{display:block;font-family:Archivo,sans-serif;font-size:18px;margin-bottom:4px}
+.info{border-left:6px solid var(--ok);background:var(--soft);padding:16px 18px;border-radius:0 12px 12px 0;margin:0 0 20px;max-width:880px}
+/* price */
+.price{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:28px;align-items:start}
+.pcard{border:3px solid var(--line);padding:22px}
+.pcard .amt{font:900 clamp(40px,6vw,56px)/1 Archivo,sans-serif}.pcard .amt small{font-size:18px;font-weight:700}
+.pcard ul{padding-left:20px;margin:14px 0}.pcard li{margin:6px 0}
+.fine{font-size:14px;color:var(--mute);margin-top:12px}
+/* app */
+#app{min-height:40vh}
+.q{max-width:720px}
+.q h2{font-size:clamp(26px,3.6vw,34px);line-height:1.1;margin:0 0 6px;text-wrap:balance}
+.q .sub{color:var(--mute);margin:0 0 6px}
+.q .why{font-size:15px;background:var(--soft);padding:10px 14px;border-radius:10px;margin:10px 0 0}
+.rail{display:flex;gap:6px;margin:0 0 22px}.rail i{flex:1;height:6px;border-radius:3px;background:var(--hair)}.rail i.on{background:var(--ok)}
+.fld{margin:22px 0 0}.fld>.lab{display:block;font-weight:700;font-size:17px;margin-bottom:10px}
+.opts{display:flex;flex-wrap:wrap;gap:8px}
+.opt{font:inherit;font-size:16px;min-height:44px;padding:9px 16px;border-radius:999px;border:1.5px solid var(--hair);background:transparent;color:var(--ink);cursor:pointer;text-align:left}
+.opt:hover{border-color:var(--ok)}.opt[aria-pressed=true]{background:var(--field);border-color:var(--field);color:#fff}
+.num{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.num input{font:inherit;font-size:16px;width:130px;min-height:44px;padding:8px 12px;border-radius:10px;border:1.5px solid var(--hair);background:var(--bg);color:var(--ink)}
+.nav{display:flex;gap:10px;margin-top:30px;align-items:center;flex-wrap:wrap}
+.err{color:var(--warn);font-weight:600}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:18px 0}
+.stat{border-top:6px solid var(--line);padding-top:8px}.stat b{display:block;font:900 clamp(30px,4vw,40px)/1 Archivo,sans-serif}.stat span{font-size:14px;color:var(--mute)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}.chip{background:var(--field);color:#fff;border-radius:999px;padding:6px 14px;font-weight:600;font-size:15px}
+.locked{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,240px),1fr));gap:10px}
+.locked li{border:2px dashed var(--hair);padding:12px 14px;border-radius:10px;color:var(--mute)}.locked li b{color:var(--ink);display:block}
+.unlock{border:3px solid var(--line);padding:20px;margin:24px 0;max-width:720px}
+.tools{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 24px}
+.rh h2{font-size:clamp(28px,4vw,40px);line-height:1.05;margin:0 0 6px;text-wrap:balance}
+.sec{margin-top:40px}.sec>h2{font-size:26px;margin:0 0 12px}
+.skip{padding-left:20px}.skip li{margin:6px 0}
+footer{padding:32px 0 48px;color:var(--mute);font-size:14px}
+footer a{color:inherit}
+body[data-mode=app] .mk{display:none}
+body[data-mode=landing] #appband{display:none}
+.resume{background:var(--soft);padding:12px 0;font-size:15px}
+@media(max-width:900px){.week{grid-template-columns:repeat(auto-fill,minmax(min(100%,150px),1fr))}.price{grid-template-columns:1fr}.grade{grid-template-columns:1fr}}
+@media(max-width:700px){.steps{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){.row{grid-template-columns:1fr;gap:0}.panel h3{font-size:22px}.tl li{grid-template-columns:4.2em minmax(0,1fr);gap:10px}.tl time{font-size:18px}
+ table{font-size:14px}.stack thead{display:none}.stack tr{display:grid;padding-block:10px;border-bottom:1px solid var(--hair)}.stack td{display:flow-root;border:0;padding:3px 0;padding-inline-start:8em;text-align:start}.stack td::before{content:attr(data-l);float:inline-start;width:7.5em;margin-inline-start:-8em;font-weight:600}}
+@media(prefers-reduced-motion:no-preference){.q,.view{animation:in .35s ease}@keyframes in{from{opacity:0;transform:translateY(8px)}}}
+@media print{
+ :root{color-scheme:light}body{background:#fff;color:#000}
+ .mk,.top,.noprint,.tools,.nav,footer,.resume{display:none!important}
+ #appband{display:block!important;padding:0}
+ .day.hard{background:#fff;color:#000;border-width:3px}.day.hard .dx{color:#333}
+ .sec{break-inside:auto}.panel,.day,.tl li{break-inside:avoid}
+ a{color:#000}
+}
 </style>
+<script>new MutationObserver(()=>{for(const c of document.querySelectorAll('.stack td:not([data-l])')){let i=0,p=c;while(p=p.previousElementSibling)i+=p.colSpan;c.dataset.l=c.closest('table').rows[0].cells[i]?.textContent||''}}).observe(document,{childList:true,subtree:true})</script>
 </head>
-<body>
-<header class="top">
-  <h1>Could a supplement help you move and think better?</h1>
-  <p>Seven short questions. You get options graded by the strength of the research, the foods that back them up, a weekly activity plan and a daily schedule, plus the safety checks that apply to you.</p>
-  <div class="rail" id="rail"></div>
+<body data-mode="landing">
+<div class="resume noprint" id="resume" hidden><div class="wrap">You have a saved report on this device. <a href="#" id="resumelink">Open it</a></div></div>
+
+<header class="top mk">
+ <div class="wrap">
+  <h1>Know which supplements are worth it for how you move and think.</h1>
+  <p class="lede">Seven questions. A free preview of your top focus areas. Then a full report graded by the strength of the research, with the foods, weekly activity plan and daily schedule that make them work, screened against your medicines and conditions.</p>
+  <div class="cta"><button class="btn big" data-start>Start free: answer 7 questions</button><a class="btn big ghost" href="#sample">See a sample report</a></div>
+  <ul class="trust"><li>Free preview, no card needed</li><li>Full report $19.95 CAD, one time</li><li>Free updates for 90 days</li><li>Educational, not medical advice</li></ul>
+ </div>
 </header>
-<main id="app"></main>
+
+<section class="band mk"><div class="wrap">
+ <h2>How it works</h2>
+ <ol class="steps">
+  <li><b>1. Answer 7 questions</b>About two minutes. No name or email needed.</li>
+  <li><b>2. See your free preview</b>Your top focus areas, how many options matched, how many were left out for safety, and one evidence-graded insight.</li>
+  <li><b>3. Unlock the full report</b>$19.95 CAD for every option with amounts, food pairings, a 7-day activity plan, a daily schedule, safety notes and a printable PDF.</li>
+ </ol>
+</div></section>
+
+<section class="band mk" id="sample"><div class="wrap">
+ <h2>Scroll through a real sample report</h2>
+ <p class="intro">This is what the full report looks like, built for a fictional person. Yours is built from your own answers.</p>
+ <div class="sample" tabindex="0" aria-label="Sample report, scrollable">
+  <div class="tag"><span>Sample report</span><span>Fictional person, for illustration</span></div>
+  <div class="inner">
+   <div class="persona"><b>Sample answers:</b> 34, runs 4 days a week with sessions up to 90 minutes, vegetarian, poor sleep, moderate stress, menstruates, takes no medicines, lives in Ontario.</div>
+   <div class="grid">
+    <article class="panel"><h3>Caffeine</h3><div class="kind">Stimulant</div><div class="rule"></div>
+     <div class="row"><span class="lab">Evidence</span><span><span class="pips"><b class="f"></b><b class="f"></b><b class="f"></b></span>Strong</span></div>
+     <div class="row"><span class="lab">What it does</span><span>Reliably improves endurance, power and alertness.</span></div>
+     <div class="row"><span class="lab">Studied amount</span><span>3–6 mg per kg about 60 minutes before. For her, about 180–360 mg. Healthy adults: no more than 400 mg a day (Health Canada).</span></div>
+     <div class="row"><span class="lab">Pair with food</span><span>A banana or toast alongside reduces jitters.</span></div>
+     <div class="row"><span class="lab">Check first</span><span class="flag">Poor sleep: no caffeine within 6–8 hours of bedtime.</span></div></article>
+    <article class="panel"><h3>Dietary nitrate</h3><div class="kind">Beetroot juice, food-based</div><div class="rule"></div>
+     <div class="row"><span class="lab">Evidence</span><span><span class="pips"><b class="f"></b><b class="f"></b><b></b></span>Moderate</span></div>
+     <div class="row"><span class="lab">What it does</span><span>Lowers the oxygen cost of exercise; clearer benefit in recreational runners.</span></div>
+     <div class="row"><span class="lab">Food swap</span><span>A big arugula and spinach salad at lunch adds nitrate for the price of groceries.</span></div>
+     <div class="row"><span class="lab">Check first</span><span class="flag">Skip antibacterial mouthwash; it blocks the effect.</span></div></article>
+    <article class="panel"><h3>Iron</h3><div class="kind">Mineral, test first</div><div class="rule"></div>
+     <div class="row"><span class="lab">Evidence</span><span><span class="pips"><b class="f"></b><b class="f"></b><b></b></span>Moderate</span></div>
+     <div class="row"><span class="lab">Why for her</span><span>Runner, vegetarian and menstruates: three reasons to check ferritin.</span></div>
+     <div class="row"><span class="lab">Pair with food</span><span>Lentils with peppers or an orange; keep tea and coffee 1–2 hours away.</span></div>
+     <div class="row"><span class="lab">Check first</span><span class="flag">Blood test before taking any. Never self-prescribe.</span></div></article>
+   </div>
+   <p class="sub2">Food first: monthly cost</p>
+   <div class="scroll"><table class="stack"><thead><tr><th>Option</th><th>Supplement, per month</th><th>Food-first alternative</th></tr></thead><tbody>
+    <tr><td>Vitamin D</td><td class="num">About $1–2</td><td>Fortified milk and fish help, but rarely cover a Canadian winter.</td></tr>
+    <tr><td>Omega-3</td><td class="num">$6–12</td><td>Two servings of salmon, trout or sardines a week.</td></tr></tbody></table></div>
+   <p class="sub2">Her week of activity</p>
+   <div class="week">
+    <div class="day"><span class="dn">Mon</span><span class="dt">Easy cardio 40 min</span></div><div class="day hard"><span class="dn">Tue</span><span class="dt">Strength, full body</span></div>
+    <div class="day hard"><span class="dn">Wed</span><span class="dt">Intervals</span></div><div class="day"><span class="dn">Thu</span><span class="dt">Brisk walk 30 min</span></div>
+    <div class="day hard"><span class="dn">Fri</span><span class="dt">Strength, full body</span></div><div class="day hard"><span class="dn">Sat</span><span class="dt">Long easy run 75 min</span></div>
+    <div class="day rest"><span class="dn">Sun</span><span class="dt">Rest</span></div>
+   </div>
+   <p class="sub2">A sample day</p>
+   <ol class="tl">
+    <li><time>7:30</time><div><b>Breakfast with protein</b>Greek yogurt, oats and berries.<div class="sup">Vitamin D: with this meal; fat helps absorption.</div></div></li>
+    <li><time>12:30</time><div><b>Lunch</b>Lentil salad with arugula and peppers.<div class="sup">Beetroot shot: 2–3 hours before training.</div></div></li>
+    <li><time>15:00</time><div><b>Before training</b>Banana or toast.<div class="sup">Caffeine: only if training before about 3 pm.</div></div></li>
+    <li><time>21:30</time><div><b>Wind down</b>Dim screens, 10 minutes of stretching.</div></li>
+   </ol>
+   <p class="sub2">Safety notes</p>
+   <article class="panel out" style="max-width:520px"><h3>Saffron extract</h3><div class="kind">Left out for safety</div><div class="rule"></div><div class="row"><span class="lab">Reason</span><span class="flag">Shown as an example: would be left out if she took an antidepressant.</span></div></article>
+  </div>
+ </div>
+</div></section>
+
+<section class="band mk"><div class="wrap">
+ <h2>Why 7 questions is enough</h2>
+ <p class="intro">Each question is a high-signal input. Together they decide what is considered, what is ruled out, and how your plan is timed.</p>
+ <div class="scroll"><table class="stack"><thead><tr><th>Question</th><th>What it shapes in your report</th></tr></thead><tbody>
+  <tr><td>1. Your goals</td><td>Which options are considered at all, and how they are ranked.</td></tr>
+  <tr><td>2. How you move and how often</td><td>Performance aids for your type of training, your 7-day activity plan and when to take things.</td></tr>
+  <tr><td>3. Age, weight, menstruation</td><td>Amounts per kg, iron screening, and adult-only rules.</td></tr>
+  <tr><td>4. Diet and sun</td><td>Gaps that matter: B12, vitamin D, protein, omega-3, iron.</td></tr>
+  <tr><td>5. Sleep, stress, mood, caffeine</td><td>Sleep and stress options, caffeine timing and limits, and mood support.</td></tr>
+  <tr><td>6. Medicines and conditions</td><td>Interactions and contraindications: what gets flagged or left out entirely.</td></tr>
+  <tr><td>7. Drug-tested sport</td><td>Contamination warnings and certified-product advice.</td></tr>
+ </tbody></table></div>
+</div></section>
+
+<section class="band mk"><div class="wrap">
+ <h2>What “graded by the strength of the research” means</h2>
+ <div class="grade">
+  <div><span class="pips"><b class="f"></b><b class="f"></b><b class="f"></b></span><h3>Strong</h3>Consistent benefit across many randomised controlled trials in people, backed by expert consensus such as the IOC 2018 statement and the Australian Institute of Sport framework.</div>
+  <div><span class="pips"><b class="f"></b><b class="f"></b><b></b></span><h3>Moderate</h3>Benefit in several human trials, but only in some situations (certain sports, or people who are low in a nutrient), or results vary between studies.</div>
+  <div><span class="pips"><b class="f"></b><b></b><b></b></span><h3>Emerging</h3>Small, short or mixed human trials. Plausible but not proven, and the report says so plainly.</div>
+ </div>
+ <p class="sub2">When food, sleep or movement beats a pill</p>
+ <ul class="cards">
+  <li><b>Sleep</b>7–9 hours does more for recovery, mood and focus than anything in a bottle.</li>
+  <li><b>Exercise for mood</b>Regular activity has strong evidence for mood and stress; most mood supplements are emerging.</li>
+  <li><b>Protein from food</b>Spreading 20–40 g across meals usually beats a shake, for less money.</li>
+  <li><b>Daylight</b>Morning light sets your body clock for better sleep at night.</li>
+ </ul>
+</div></section>
+
+<section class="band mk"><div class="wrap">
+ <h2>Safety checks run on every report</h2>
+ <ul class="cards">
+  <li><b>Interactions</b>Nine medicine groups, including blood thinners, antidepressants, blood pressure, thyroid and diabetes medicines.</li>
+  <li><b>Contraindications</b>Nine conditions, plus pregnancy and breastfeeding. Options that don't fit are left out and the reason is shown.</li>
+  <li><b>Upper limits</b>Caffeine 400 mg a day for adults and 300 mg in pregnancy (Health Canada), vitamin D 4,000 IU, supplemental magnesium 350 mg.</li>
+  <li><b>Under 18</b>No supplement suggestions; food and activity guidance only.</li>
+  <li><b>Low mood</b>A support message and the 9-8-8 crisis line come first when answers suggest it.</li>
+  <li><b>Drug-tested athletes</b>Advice to use only batch-tested products (NSF Certified for Sport, Informed Sport).</li>
+ </ul>
+ <div class="info" style="margin-top:20px"><strong>Educational, not medical advice.</strong> Supplement Check does not diagnose or treat anything and does not replace your doctor, pharmacist or dietitian. Amounts shown are those used in research on healthy adults. Take your report to a professional before starting anything new, especially if you take medicines.</div>
+</div></section>
+
+<section class="band mk"><div class="wrap">
+ <h2>Built for Canada</h2>
+ <ul class="cards">
+  <li><b>Look for the NPN</b>Licensed natural health products carry an 8-digit NPN or DIN-HM on the label, meaning Health Canada has assessed them. You can check a number in Health Canada's Licensed Natural Health Products Database.</li>
+  <li><b>Health Canada limits</b>Caffeine and vitamin D limits follow Health Canada guidance.</li>
+  <li><b>Winter vitamin D</b>The report accounts for low sun from about October to April, and for vitamin D added to Canadian milk.</li>
+  <li><b>Canadian movement guidelines</b>Weekly plans are built around the Canadian 24-Hour Movement Guidelines.</li>
+  <li><b>Kilograms or pounds</b>Enter your weight either way; amounts are worked out in metric.</li>
+  <li><b>Prices in CAD</b>Monthly costs are from Canadian retailers.</li>
+ </ul>
+</div></section>
+
+<section class="band mk"><div class="wrap">
+ <h2>Food first: what a supplement costs each month</h2>
+ <p class="intro">Your report shows this for every option it suggests, so you can decide whether groceries and movement get you most of the way.</p>
+ <div class="scroll"><table class="stack"><thead><tr><th>Supplement</th><th>Typical amount</th><th>Per month</th><th>Food-first alternative</th></tr></thead><tbody>
+  <tr><td>Creatine monohydrate</td><td>5 g a day</td><td class="num">$6–11</td><td>Meat and fish give 1–2 g a day, not the 3–5 g used in studies.</td></tr>
+  <tr><td>Vitamin D</td><td>1,000 IU a day</td><td class="num">About $1–2</td><td>Fatty fish and fortified milk help, but rarely cover a Canadian winter.</td></tr>
+  <tr><td>Omega-3</td><td>1–2 g EPA+DHA</td><td class="num">$6–12</td><td>Two servings of salmon, trout or sardines a week.</td></tr>
+  <tr><td>Magnesium glycinate</td><td>200–350 mg</td><td class="num">$4–10</td><td>Pumpkin seeds, almonds, beans and leafy greens most days.</td></tr>
+  <tr><td>Protein powder</td><td>1 scoop a day</td><td class="num">$45–90</td><td>Eggs, milk, Greek yogurt, lentils and tofu, usually cheaper per 20 g of protein.</td></tr>
+ </tbody></table></div>
+ <p class="note">Approximate, based on prices at Walmart, Real Canadian Superstore, Costco and Well.ca, checked November 2026. Prices vary by brand and sale.</p>
+</div></section>
+
+<section class="band mk" id="pricing"><div class="wrap price">
+ <div><h2>One price. Updates included.</h2><p class="intro">Start free and only pay if the preview looks useful. Come back after 4–8 weeks of training, update your answers, and get a fresh report at no extra cost.</p></div>
+ <div class="pcard">
+  <div class="amt">$19.95 <small>CAD, one time</small></div>
+  <ul>
+   <li>Every matched option with evidence grade and studied amounts</li>
+   <li>Food pairings and monthly cost versus food-first swaps</li>
+   <li>Your 7-day activity plan and an hour-by-hour daily schedule</li>
+   <li>Personal safety notes and what was left out, and why</li>
+   <li>Printable report and PDF, plus a summary for your doctor</li>
+   <li>Free updates for 90 days, with a 6-week re-check reminder</li>
+  </ul>
+  <button class="btn big" data-start style="width:100%">Start free: answer 7 questions</button>
+  <p class="fine">Secure payment by Stripe; we never see your card. 14-day refund if it isn't useful. <a href="privacy.html">Privacy policy</a> · <a href="refund.html">Refund policy</a></p>
+ </div>
+</div></section>
+
+<section class="band" id="appband"><div class="wrap">
+ <p class="noprint" style="margin:0 0 18px"><a href="./" id="home">← Back to overview</a></p>
+ <main id="app" aria-live="polite"></main>
+</div></section>
+
+<footer><div class="wrap">
+ <p>Supplement Check is an educational tool and does not provide medical advice, diagnosis or treatment. If you are in crisis, call or text 9-8-8 (Canada) or your local emergency number.</p>
+ <p><a href="privacy.html">Privacy policy</a> · <a href="refund.html">Refund policy</a></p>
+</div></footer>
+
 <script>
 {
-// Supabase: paste your project URL and anon/publishable key (safe to expose; row-level security limits it to inserts).
-// Leave empty to hide the "send my answers" option.
+const API='https://swnziwtxepkxxcezvpcc.supabase.co/functions/v1/report';
 const SUPA_URL='https://swnziwtxepkxxcezvpcc.supabase.co';
 const SUPA_KEY='sb_publishable_mQUqvqgDIEO902YGce848g_XReoH13k';
+const SITE=location.origin+location.pathname;
 const steps=[
-{t:'What are you hoping to improve?',s:'Pick all that apply.',f:[{id:'goals',type:'multi',req:1,o:[['strength','Strength and muscle'],['endurance','Endurance'],['sprint','Sprints and repeated hard efforts'],['recovery','Recovery and soreness'],['everyday','Everyday health, staying active'],['focus','Focus and mental sharpness'],['mood','Mood'],['stress','Stress and calm'],['sleep','Sleep'],['energy','Energy and fatigue']]}]},
-{t:'How do you move?',s:'Walking counts. So does not much at the moment.',f:[{id:'acts',type:'multi',label:'Activities',o:[['walk','Walking or hiking'],['strength','Weights or resistance'],['endurance','Running, cycling, swimming'],['team','Team or racquet sports'],['hiit','HIIT or classes'],['mind','Yoga, Pilates, mobility'],['none','Not much right now']]},{id:'freq',type:'single',label:'Days per week',o:[['0','0–1'],['2','2–3'],['4','4–5'],['6','6+']]},{id:'long',type:'single',label:'Typical session',o:[['s','Under 45 min'],['m','45–90 min'],['l','Over 90 min, or often in heat']]}]},
-{t:'A little about you',s:'Used to tailor amounts and screen for safety. Your answers stay in this browser.',f:[{id:'age',type:'single',req:1,label:'Age',o:[['u18','Under 18'],['18','18–29'],['30','30–49'],['50','50–64'],['65','65+']]},{id:'w',type:'number',label:'Body weight (optional)'},{id:'mens',type:'single',label:'Do you menstruate?',o:[['y','Yes'],['n','No'],['x','Prefer not to say']]}]},
-{t:'How do you eat?',f:[{id:'diet',type:'single',label:'Eating pattern',o:[['omni','I eat meat and fish'],['veg','Vegetarian or pescatarian'],['vegan','Vegan']]},{id:'prot',type:'single',label:'Protein at most meals? (meat, fish, eggs, dairy, tofu, legumes)',o:[['y','Yes'],['some','Sometimes'],['n','Rarely']]},{id:'sun',type:'single',label:'Regular sun on your skin?',o:[['y','Yes, most of the year'],['n','Little, or long winters']]}]},
-{t:'Sleep, stress and mood',f:[{id:'sleepq',type:'single',label:'Sleep quality',o:[['good','Good'],['ok','Okay'],['poor','Poor']]},{id:'stressl',type:'single',label:'Stress level',o:[['low','Low'],['med','Moderate'],['high','High']]},{id:'low',type:'single',label:'Over the past two weeks, how often have you felt down, depressed or hopeless?',o:[['0','Not at all'],['1','Several days'],['2','More than half the days'],['3','Nearly every day']]},{id:'caf',type:'single',label:'Caffeine you already have per day',o:[['0','None'],['1','1–2 coffees or equivalent'],['3','3 or more']]}]},
-{t:'Health check',s:'This decides which options get a “check with your clinician first” flag, or are left out.',f:[{id:'preg',type:'single',req:1,label:'Pregnant, trying to conceive or breastfeeding?',o:[['y','Yes'],['n','No']]},{id:'cond',type:'multi',label:'Conditions',o:[['kidney','Kidney disease'],['liver','Liver disease'],['heart','Heart disease or rhythm problem'],['bp','High blood pressure'],['anx','Anxiety or panic disorder'],['thyroid','Thyroid condition'],['auto','Autoimmune condition'],['diab','Diabetes'],['bleed','Bleeding disorder']]},{id:'meds',type:'multi',label:'Medicines',o:[['thin','Blood thinners'],['bpmed','Blood pressure or heart medicine'],['ssri','Antidepressant or anti-anxiety'],['sed','Sleep aid or sedative'],['thy','Thyroid medicine'],['dm','Diabetes medicine (incl. metformin)'],['pde','ED medicine or nitrates'],['abx','Antibiotics or osteoporosis medicine'],['other','Another regular prescription']]}]},
-{t:'Do you compete in a drug-tested sport?',s:'Supplements can be contaminated with banned substances.',f:[{id:'tested',type:'single',req:1,o:[['y','Yes'],['n','No']]}]}
+{t:'What are you hoping to improve?',s:'Pick all that apply.',why:'Decides which options are considered and how they are ranked.',f:[{id:'goals',type:'multi',req:1,o:[['strength','Strength and muscle'],['endurance','Endurance'],['sprint','Sprints and repeated hard efforts'],['recovery','Recovery and soreness'],['everyday','Everyday health, staying active'],['focus','Focus and mental sharpness'],['mood','Mood'],['stress','Stress and calm'],['sleep','Sleep'],['energy','Energy and fatigue']]}]},
+{t:'How do you move?',s:'Walking counts. So does not much at the moment.',why:'Shapes performance options, your weekly plan and the timing of everything.',f:[{id:'acts',type:'multi',label:'Activities',o:[['walk','Walking or hiking'],['strength','Weights or resistance'],['endurance','Running, cycling, swimming'],['team','Team or racquet sports'],['hiit','HIIT or classes'],['mind','Yoga, Pilates, mobility'],['none','Not much right now']]},{id:'freq',type:'single',label:'Days per week',o:[['0','0–1'],['2','2–3'],['4','4–5'],['6','6+']]},{id:'long',type:'single',label:'Typical session',o:[['s','Under 45 min'],['m','45–90 min'],['l','Over 90 min, or often in heat']]}]},
+{t:'A little about you',s:'No name or email needed.',why:'Sets amounts per kg, iron screening and adult-only rules.',f:[{id:'age',type:'single',req:1,label:'Age',o:[['u18','Under 18'],['18','18–29'],['30','30–49'],['50','50–64'],['65','65+']]},{id:'w',type:'number',label:'Body weight (optional)'},{id:'mens',type:'single',label:'Do you menstruate?',o:[['y','Yes'],['n','No'],['x','Prefer not to say']]}]},
+{t:'How do you eat?',why:'Finds gaps that matter: B12, vitamin D, protein, omega-3 and iron.',f:[{id:'diet',type:'single',label:'Eating pattern',o:[['omni','I eat meat and fish'],['veg','Vegetarian or pescatarian'],['vegan','Vegan']]},{id:'prot',type:'single',label:'Protein at most meals? (meat, fish, eggs, dairy, tofu, legumes)',o:[['y','Yes'],['some','Sometimes'],['n','Rarely']]},{id:'sun',type:'single',label:'Regular sun on your skin?',o:[['y','Yes, most of the year'],['n','Little, or long winters']]}]},
+{t:'Sleep, stress and mood',why:'Drives sleep and stress options, caffeine timing and mood support.',f:[{id:'sleepq',type:'single',label:'Sleep quality',o:[['good','Good'],['ok','Okay'],['poor','Poor']]},{id:'stressl',type:'single',label:'Stress level',o:[['low','Low'],['med','Moderate'],['high','High']]},{id:'low',type:'single',label:'Over the past two weeks, how often have you felt down, depressed or hopeless?',o:[['0','Not at all'],['1','Several days'],['2','More than half the days'],['3','Nearly every day']]},{id:'caf',type:'single',label:'Caffeine you already have per day',o:[['0','None'],['1','1–2 coffees or equivalent'],['3','3 or more']]}]},
+{t:'Health check',s:'This decides which options get flagged or left out.',why:'Screens interactions and contraindications.',f:[{id:'preg',type:'single',req:1,label:'Pregnant, trying to conceive or breastfeeding?',o:[['y','Yes'],['n','No']]},{id:'cond',type:'multi',label:'Conditions',o:[['kidney','Kidney disease'],['liver','Liver disease'],['heart','Heart disease or rhythm problem'],['bp','High blood pressure'],['anx','Anxiety or panic disorder'],['thyroid','Thyroid condition'],['auto','Autoimmune condition'],['diab','Diabetes'],['bleed','Bleeding disorder']]},{id:'meds',type:'multi',label:'Medicines',o:[['thin','Blood thinners'],['bpmed','Blood pressure or heart medicine'],['ssri','Antidepressant or anti-anxiety'],['sed','Sleep aid or sedative'],['thy','Thyroid medicine'],['dm','Diabetes medicine (incl. metformin)'],['pde','ED medicine or nitrates'],['abx','Antibiotics or osteoporosis medicine'],['other','Another regular prescription']]}]},
+{t:'Do you compete in a drug-tested sport?',s:'Supplements can be contaminated with banned substances.',why:'Adds contamination warnings and certified-product advice.',f:[{id:'tested',type:'single',req:1,o:[['y','Yes'],['n','No']]}]}
 ];
-let A={goals:[],acts:[],cond:[],meds:[],unit:'kg'},step=0;
-try{const s=JSON.parse(localStorage.getItem('suppcheck')||'null');if(s&&s.A)A=Object.assign(A,s.A)}catch(e){}
-const save=()=>{try{localStorage.setItem('suppcheck',JSON.stringify({A}))}catch(e){}};
+const fresh=()=>({goals:[],acts:[],cond:[],meds:[],unit:'kg'});
+let A=fresh(),step=0,mode='create',cur=null,last=null;
+const ls={get:k=>{try{return JSON.parse(localStorage.getItem(k)||'null')}catch(e){return null}},set:(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const has=(k,v)=>Array.isArray(A[k])&&A[k].includes(v);
-const kg=()=>{const n=parseFloat(A.w);if(!n||n<25||n>400)return 0;return A.unit==='lb'?n*0.4536:n};
-const per=(lo,hi,u)=>{const w=kg();return w?` For you, about ${Math.round(w*lo)}–${Math.round(w*hi)} ${u}.`:''};
-const app=document.getElementById('app'),rail=document.getElementById('rail');
-
-// Evidence: Strong = consistent benefit in many trials; Moderate = benefit in some contexts; Emerging = early or mixed.
-const S=[
-{id:'creatine',n:'Creatine monohydrate',k:'Muscle energy compound',gr:3,g:{strength:4,sprint:4,recovery:1,focus:1,energy:1},a:{strength:2,team:2,hiit:2},
- why:'Among the best-studied supplements. Raises muscle phosphocreatine, improving repeated hard efforts and gains in strength and lean mass with training. Early studies also suggest brain benefits, mostly under sleep loss or in people eating little meat.',
- dose:()=>'3–5 g daily, any time of day. A loading phase is optional.',
- chk:()=>({out:has('cond','kidney')?'Kidney disease: needs medical advice first.':null,w:['Expect about 1–2 kg of water weight in muscle.']})},
-{id:'caffeine',n:'Caffeine',k:'Stimulant',gr:3,g:{endurance:4,sprint:3,strength:2,focus:2,energy:2},a:{endurance:2,team:1,hiit:1},
- why:'Reliably improves endurance, power and alertness. Lower amounts work for many people with fewer side effects.',
- dose:()=>'3–6 mg per kg about 60 minutes before exercise; 2–3 mg per kg often works too.'+per(3,6,'mg')+' Healthy adults: no more than 400 mg a day from all sources.',
- chk:()=>{const w=[];let out=null;
-  if(has('cond','heart'))out='Heart rhythm or heart disease: ask your doctor first.';
-  if(has('cond','anx'))w.push('Can worsen anxiety and panic.');
-  if(A.sleepq==='poor'||has('goals','sleep'))w.push('Avoid within 6–8 hours of bedtime; it can undo sleep goals.');
-  if(A.caf==='3')w.push('You already take in plenty; timing matters more than adding more.');
-  if(A.preg==='y')w.push('In pregnancy, keep total intake under 200 mg a day.');
-  if(has('meds','ssri')||has('meds','thy'))w.push('Some antidepressants and thyroid medicines interact with caffeine.');
-  return{out,w}}},
-{id:'betaal',n:'Beta-alanine',k:'Amino acid, muscle buffer',gr:2,g:{sprint:3,endurance:1},a:{hiit:2,team:1},
- why:'Builds muscle carnosine, which buffers acid. Helps most in hard efforts lasting about 30 seconds to 10 minutes.',
- dose:()=>'3.2–6.4 g a day split into 0.8–1.6 g doses, for at least 4 weeks.',
- chk:()=>({out:null,w:['Harmless tingling of the skin is common; smaller split doses reduce it.']})},
-{id:'nitrate',n:'Dietary nitrate (beetroot juice)',k:'Food-based',gr:2,g:{endurance:3,sprint:1},a:{endurance:2,team:1},
- why:'Improves the oxygen cost of exercise. Benefits are clearer in recreational than elite athletes.',
- dose:()=>'About 6–8 mmol nitrate (typically one or two concentrated beet shots) 2–3 hours before.',
- chk:()=>{const w=['Skip antibacterial mouthwash, which blocks the effect. Pink urine is harmless.'];let out=null;
-  if(has('meds','pde'))out='ED medicines or nitrates: risk of a large drop in blood pressure.';
-  if(has('meds','bpmed'))w.push('May lower blood pressure further alongside your medicine.');return{out,w}}},
-{id:'bicarb',n:'Sodium bicarbonate',k:'Buffer',gr:2,g:{sprint:2},a:{hiit:1},
- why:'Improves short, very hard efforts of 1–10 minutes. Stomach upset is the main drawback.',
- dose:()=>'0.2–0.3 g per kg, 1–3 hours before, with a meal.'+per(.2,.3,'g')+' Trial it in training, never first on race day.',
- chk:()=>({out:(has('cond','bp')||has('cond','kidney')||has('meds','bpmed'))?'High sodium load: not suited to high blood pressure or kidney disease.':null,w:[]})},
-{id:'protein',n:'Protein powder',k:'Food supplement',gr:3,g:{strength:3,recovery:3,everyday:1},a:{strength:2},
- why:'Total daily protein drives muscle repair and growth. Powder is a convenient top-up when food falls short.',
- dose:()=>'Aim for 1.4–2.0 g per kg a day in total, from food first.'+per(1.4,2,'g')+' A 20–40 g serving after training fills gaps.',
- boost:()=>A.prot==='n'?3:A.prot==='some'?1:0,
- chk:()=>({out:has('cond','kidney')?'Kidney disease: protein targets should come from your care team.':null,w:A.diet==='vegan'?['Choose a soy or pea blend.']:[]})},
-{id:'vitd',n:'Vitamin D',k:'Vitamin',gr:2,g:{},a:{},
- why:'Supports bone, muscle function and immunity. Helps if you are low, which is common with little sun or long winters.',
- dose:()=>'Ideally test your blood level first. Common maintenance is 1,000–2,000 IU a day; stay under 4,000 IU unless prescribed.',
- boost:()=>(A.sun==='n'?4:0)+(A.age==='65'?2:0),
- chk:()=>({out:null,w:has('cond','kidney')?['Kidney disease changes vitamin D handling; ask first.']:[]})},
-{id:'iron',n:'Iron',k:'Mineral, test first',gr:2,g:{},a:{},
- why:'Low iron saps endurance and energy, and is common in people who menstruate, run a lot or eat no meat. Only helps if you are actually low.',
- dose:()=>'Get a ferritin blood test first. Your clinician sets the dose; extra iron when levels are normal can do harm.',
- boost:()=>((A.mens==='y'?2:0)+(A.diet!=='omni'&&A.diet?1:0))*((has('acts','endurance')||has('goals','energy')||has('goals','endurance'))?2:0),
- chk:()=>({out:null,w:['Never self-prescribe. Keep away from children.']})},
-{id:'b12',n:'Vitamin B12',k:'Vitamin',gr:3,g:{},a:{},
- why:'Needed for nerves, red blood cells and energy. Plant diets contain almost none, absorption falls with age, and metformin lowers levels.',
- dose:()=>'Vegans commonly take 25–250 µg a day or a weekly dose. Over 50 or on metformin: ask for a blood test.',
- boost:()=>({vegan:5,veg:2}[A.diet]||0)+(A.age==='50'||A.age==='65'?1:0)+(has('meds','dm')?2:0),
- chk:()=>({out:null,w:[]})},
-{id:'omega3',n:'Omega-3 (fish or algae oil)',k:'Fatty acids',gr:1,g:{mood:3,recovery:1,everyday:1},a:{},
- why:'For mood, EPA-rich omega-3 shows benefit as an add-on to standard care in several trials. Effects on soreness and recovery are modest and mixed.',
- dose:()=>'About 1–2 g a day of EPA+DHA; for mood, products with at least 60% EPA were used.',
- chk:()=>({out:null,w:(has('meds','thin')||has('cond','bleed'))?['Blood thinners or bleeding disorder: can raise bleeding risk.']:A.diet==='vegan'?['Choose algae oil.']:[]})},
-{id:'theanine',n:'L-theanine with caffeine',k:'Amino acid pairing',gr:2,g:{focus:4,energy:1,stress:1},a:{},
- why:'In short trials, the pair improves attention and task switching, with less jitteriness than caffeine alone.',
- dose:()=>'Roughly 100–200 mg L-theanine with 50–100 mg caffeine.',
- chk:()=>{let out=has('cond','heart')?'Contains caffeine: heart condition.':null;const w=[];
-  if(has('cond','anx'))w.push('Caffeine can still trigger anxiety; theanine alone is an option.');
-  if(has('meds','bpmed'))w.push('Theanine may lower blood pressure.');
-  if(A.preg==='y')w.push('Theanine has not been studied in pregnancy.');return{out,w}}},
-{id:'mag',n:'Magnesium',k:'Mineral',gr:1,g:{sleep:2,stress:2,recovery:1},a:{},
- why:'Helps most when intake is low. Evidence for sleep and stress is small and mixed; diet is a better first step (nuts, seeds, beans, greens).',
- dose:()=>'200–350 mg elemental magnesium a day (glycinate or citrate). Above 350 mg from supplements needs medical advice.',
- chk:()=>({out:has('cond','kidney')?'Kidney disease: magnesium can build up.':null,w:has('meds','abx')?['Take at least 2 hours apart from antibiotics or osteoporosis medicine.']:['Can loosen stools, especially citrate.']})},
-{id:'melatonin',n:'Melatonin',k:'Sleep hormone',gr:2,g:{sleep:4},a:{},
- why:'Helps you fall asleep a little faster and is useful for jet lag or shift work. Best for short-term use.',
- dose:()=>'0.5–3 mg, 30–60 minutes before bed. Start at the low end.',
- chk:()=>{let out=A.preg==='y'?'Not recommended in pregnancy or breastfeeding.':has('cond','auto')?'Autoimmune conditions: ask first.':null;const w=[];
-  if(has('meds','sed'))w.push('Adds to the effect of sleep aids and sedatives.');
-  if(has('meds','thin')||has('meds','dm'))w.push('Interacts with blood thinners and diabetes medicines.');
-  w.push('Rules differ by country: over the counter in Canada and the US, prescription-only in many others.');return{out,w}}},
-{id:'ashwa',n:'Ashwagandha',k:'Herbal extract',gr:1,g:{stress:3,sleep:1,strength:1},a:{},
- why:'Several small trials report lower stress scores and slightly better sleep. Study quality varies and rare liver injury has been reported.',
- dose:()=>'Studied at 250–600 mg a day of root extract for 6–8 weeks.',
- chk:()=>{let out=null;const w=[];
-  if(A.preg==='y')out='Avoid in pregnancy and breastfeeding.';else if(has('cond','liver'))out='Liver disease: avoid.';else if(has('cond','thyroid')||has('meds','thy'))out='Can change thyroid hormone levels.';
-  if(has('cond','auto'))w.push('May stimulate the immune system.');
-  if(has('meds','sed')||has('meds','ssri'))w.push('May add to sedatives and interact with some psychiatric medicines.');
-  if(has('meds','dm')||has('meds','bpmed'))w.push('May lower blood sugar and blood pressure.');
-  w.push('Stop and see a doctor if you notice yellow skin or dark urine.');return{out,w}}},
-{id:'rhodiola',n:'Rhodiola rosea',k:'Herbal extract',gr:1,g:{energy:2,stress:1,focus:1},a:{},
- why:'Small trials suggest less mental fatigue under stress. Results are inconsistent.',
- dose:()=>'Studied at 200–600 mg a day of standardised extract.',
- chk:()=>({out:A.preg==='y'?'Not studied in pregnancy.':has('meds','ssri')?'May interact with antidepressants.':null,w:[]})},
-{id:'saffron',n:'Saffron extract',k:'Herbal extract',gr:1,g:{mood:2},a:{},
- why:'A number of small trials show improved mild low mood. Larger, longer studies are still needed.',
- dose:()=>'Studied at about 30 mg a day of extract.',
- chk:()=>({out:A.preg==='y'?'High doses are unsafe in pregnancy.':has('meds','ssri')?'Combining with antidepressants needs medical advice.':null,w:[]})},
-{id:'lytes',n:'Electrolytes',k:'Sodium and fluid',gr:2,g:{endurance:1},a:{},
- why:'For long or hot sessions, replacing sodium and fluid protects performance and helps avoid cramps and low blood sodium.',
- dose:()=>'For sessions over 60–90 minutes, about 300–600 mg sodium per hour with fluid, adjusted for how much you sweat.',
- boost:()=>A.long==='l'?4:0,
- chk:()=>({out:null,w:(has('cond','bp')||has('cond','kidney')||has('meds','bpmed'))?['Sodium limits from your care team come first.']:[]})},
-{id:'collagen',n:'Collagen with vitamin C',k:'Protein',gr:1,g:{recovery:1},a:{endurance:1,team:1},
- why:'Early research suggests it may support tendons and ligaments when taken before loading exercises.',
- dose:()=>'About 15 g collagen or gelatin with ~50 mg vitamin C, 30–60 minutes before tendon-focused training.',
- chk:()=>({out:null,w:[]})},
-{id:'cherry',n:'Tart cherry',k:'Fruit concentrate',gr:1,g:{recovery:2,sleep:1},a:{endurance:1,team:1},
- why:'May reduce soreness during hard training blocks; small trials hint at sleep benefits.',
- dose:()=>'About 30 mL concentrate twice daily for a few days around hard sessions.',
- chk:()=>({out:null,w:(has('cond','diab')||has('meds','dm'))?['Contains sugar; count it in your carbs.']:[]})}
-];
-const GR=['','Emerging','Moderate','Strong'];
-const FOOD={
-creatine:'Take with a meal that has carbs and protein; this may slightly improve uptake. Red meat and fish supply about 1–2 g a day, so vegetarians often start lower and respond more.',
-caffeine:'Coffee or tea counts toward the total. A light carb snack (banana, toast) alongside reduces jitters and stomach upset.',
-betaal:'Take with meals; loading works better that way. Chicken, turkey, beef and fish contain carnosine naturally.',
-nitrate:'Food sources: beetroot, arugula, spinach, celery and lettuce. A big leafy salad at lunch adds to the effect.',
-bicarb:'Take with a carb-rich meal (rice, pasta, toast) to cut stomach upset.',
-protein:'Food first: eggs, Greek yogurt, chicken, fish, tofu, tempeh, lentils. Aim for 20–40 g at each meal, every 3–4 hours.',
-vitd:'Take with a meal that contains fat. Food sources: salmon, trout, sardines, eggs, and milk or plant milks with added vitamin D.',
-iron:'Pair with vitamin C (orange, kiwi, peppers, strawberries). Keep tea, coffee and dairy 1–2 hours away. Food sources: red meat, lentils, chickpeas, tofu, fortified cereal.',
-b12:'Food sources: fish, eggs, dairy, and for vegans fortified plant milk and nutritional yeast.',
-omega3:'Take with a meal that contains fat. Eat fatty fish twice a week (salmon, sardines, mackerel, trout). Walnuts, chia and flax add plant omega-3, which converts poorly.',
-theanine:'Green tea naturally contains both theanine and caffeine.',
-mag:'Food sources: pumpkin seeds, almonds, cashews, spinach, black beans, oats and dark chocolate. Take the supplement with dinner.',
-melatonin:'Finish heavy meals and alcohol 2–3 hours before bed. Tart cherries and kiwi before bed showed small sleep benefits in early studies.',
-ashwa:'Take with a meal to reduce stomach upset.',
-rhodiola:'Take in the morning before breakfast; taken late in the day it can disturb sleep.',
-saffron:'A Mediterranean-style diet (olive oil, legumes, vegetables, fish, nuts) has been linked to better mood in trials.',
-lytes:'Salty snacks, broth and sports drinks replace sodium. Bananas, potatoes and yogurt add potassium.',
-collagen:'The vitamin C can come from food: an orange or kiwi. Bone broth and gelatin desserts contain collagen.',
-cherry:'Fresh or frozen tart cherries work too, but concentrate is easier to dose. It counts as a fruit portion.'};
-const SESS={
-S:['Strength, full body','3 sets of 8–12: squat or sit-to-stand, push-up, row, hip hinge, carry. Stop 2 reps before failure.',1],
-E:['Easy cardio 30–45 min','Brisk walk, bike, jog or swim at a pace you can still talk at.',0],
-I:['Intervals','10 min warm-up, then 6–8 rounds of 1 min hard and 2 min easy.',1],
-P:['Sprints and power','Warm up, then 6–10 sprints of 10–20 s with full recovery. Add jumps or throws.',1],
-L:['Long easy session 60–90 min','Steady and conversational. Practise your race-day fuelling and fluids.',1],
-T:['Your sport, or HIIT','A game, practice or class. Count it as a hard day.',1],
-W:['Brisk walk 30 min','Steps add up: aim for 7,000–10,000 across the day.',0],
-M:['Yoga or mobility 20–30 min','Hips, upper back and ankles. End with 5 min of slow breathing, exhaling longer than you inhale.',0],
-R:['Rest','A gentle walk is fine. Rest days are when training turns into fitness.',-1]};
-function plan(){
-  const g=k=>has('goals',k);
-  const focus=g('strength')?'strength':g('endurance')||has('acts','endurance')?'endurance':g('sprint')||has('acts','team')||has('acts','hiit')?'sprint':'general';
-  const T={strength:[['S',1],['W',5],['S',2],['M',6],['S',3],['E',4],['R',9]],
-   endurance:[['E',2],['S',3],['I',4],['E',6],['S',5],['L',1],['R',9]],
-   sprint:[['S',2],['E',5],['P',1],['M',6],['S',3],['T',4],['R',9]],
-   general:[['W',1],['S',2],['W',4],['M',5],['S',3],['E',6],['R',9]]}[focus];
-  const n={'0':3,'2':4,'4':5,'6':6}[A.freq]||4;
-  const keep=T.map(x=>x[1]).sort((a,b)=>a-b).slice(0,n);
-  let wk=T.map(([t,p])=>keep.includes(p)?t:(p===9?'R':'W'));
-  if(has('acts','team')&&focus!=='sprint'){const i=wk.indexOf('E');if(i>=0)wk[i]='T'}
-  if(focus==='strength'&&g('endurance')){const i=wk.indexOf('W');if(i>=0)wk[i]='E'}
-  const notes=[];
-  if(A.age==='u18')notes.push('Under 18: aim for at least 60 minutes of activity every day, including vigorous play or sport three days a week.');
-  else if(wk.filter(t=>t==='S').length>=2)notes.push('This meets the adult guideline of at least 150 minutes of moderate to vigorous activity a week, with strength work at least twice.');
-  else notes.push('The adult guideline is 150 minutes of moderate to vigorous activity a week plus strength work twice; add a second short strength session when you can.');
-  if(A.freq==='0')notes.push('New to this? For the first two weeks do half of each session, then add about 10% a week.');
-  if(A.age==='65')notes.push('Add 10 minutes of balance work (single-leg stands, heel-to-toe walking) on three days.');
-  if(A.preg==='y'||has('cond','heart')||has('cond','bp'))notes.push('Get the go-ahead from your clinician before starting hard sessions.');
-  if(g('mood')||g('stress'))notes.push('Exercise itself has strong evidence for mood and stress; outdoor sessions count double for many people.');
-  return{focus,wk,notes};
+const app=document.getElementById('app');
+const go=m=>{document.body.dataset.mode=m;window.scrollTo({top:0})};
+const pips=g=>`<span class="pips" aria-hidden="true">${[1,2,3].map(i=>`<b class="${i<=g?'f':''}"></b>`).join('')}</span>`;
+const link=()=>cur?`${SITE}?r=${cur.id}&k=${cur.token}`:'';
+async function call(body){
+  const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json','apikey':SUPA_KEY},body:JSON.stringify(body)});
+  const j=await r.json().catch(()=>({error:'Unexpected response.'}));
+  if(!r.ok&&!j.error)j.error='Something went wrong.';
+  return Object.assign(j,{status:r.status});
 }
-function day(P){
-  const has_=id=>P.has(id),L=[],sleepCare=has('goals','sleep')||A.sleepq==='poor';
-  const sup=a=>a.filter(Boolean).join(' ');
-  L.push(['7:00','Wake and get daylight','10 minutes outside within an hour of waking sets your body clock for focus by day and sleep at night.',
-    sup([has_('rhodiola')&&'Rhodiola: take now, before breakfast.'])]);
-  L.push(['7:30','Breakfast with protein','25–40 g protein (eggs, Greek yogurt, tofu scramble) plus fruit and whole grains.',
-    sup([has_('creatine')&&'Creatine: with this or any meal, same time daily.',(has_('vitd')||has_('omega3'))&&`${[has_('vitd')&&'Vitamin D',has_('omega3')&&(has_('vitd')?'omega-3':'Omega-3')].filter(Boolean).join(' and ')}: with this meal; fat helps absorption.`,
-     has_('b12')&&'B12: any time, with or without food.',has_('iron')&&'Iron: as your clinician advises, away from coffee, tea and dairy, ideally with orange or kiwi.',
-     has_('theanine')&&'L-theanine with caffeine: for a focused morning, or with your first coffee.',has_('betaal')&&'Beta-alanine: first split dose with this meal.'])]);
-  L.push(['10:30','Movement break','Stand up and walk for 5 minutes for every hour of sitting.','']);
-  L.push(['12:30','Lunch','Protein, whole grains and a big portion of leafy greens or beetroot.',
-    sup([has_('nitrate')&&'Beetroot shot: 2–3 hours before training.',has_('bicarb')&&'Sodium bicarbonate: 1–3 hours before a hard session, with this meal.',has_('betaal')&&'Beta-alanine: second split dose.'])]);
-  const tr=sleepCare?'16:00':'17:00';
-  L.push([tr==='16:00'?'15:00':'16:00','Before training','A small carb snack if it has been over 3 hours since lunch: banana, toast, yogurt.',
-    sup([has_('caffeine')&&(sleepCare?'Caffeine: only if training before about 3 pm; later doses can cost you sleep.':'Caffeine: about 60 minutes before.'),has_('collagen')&&'Collagen with vitamin C: 30–60 minutes before.'])]);
-  L.push([tr,"Today's session","Follow the day's session in your weekly plan.",sup([has_('lytes')&&'Electrolytes: during sessions over 60–90 minutes or in heat.'])]);
-  L.push([tr==='16:00'?'17:30':'18:30','Recovery meal or shake','20–40 g protein with carbs within about 2 hours of training.',
-    sup([has_('protein')&&'Protein powder: here, if food falls short.'])]);
-  L.push(['19:00','Dinner','Protein, vegetables and some olive oil or nuts. Keep alcohol low; it disrupts recovery and sleep.',
-    sup([has_('mag')&&'Magnesium: with dinner.',has_('ashwa')&&'Ashwagandha: with dinner.',has_('cherry')&&'Tart cherry: second serving.',has_('betaal')&&'Beta-alanine: last split dose.'])]);
-  L.push(['21:30','Wind down','Dim lights and screens. 10 minutes of stretching or slow breathing.',
-    sup([has_('melatonin')&&'Melatonin: 30–60 minutes before bed.'])]);
-  L.push(['22:30','Sleep','7–9 hours. Keep the room dark, cool and quiet, and wake at the same time daily.','']);
-  return L;
-}
-function plate(){const f=[['Protein at every meal','20–40 g each time, spread across 3–4 meals.']];
-  f.push(['Carbs around training',(has('goals','endurance')||A.long==='l')?'Oats, rice, potatoes, pasta and fruit before and after sessions; more on long or hard days.':'Whole grains, potatoes and fruit, timed before and after training.']);
-  f.push(['Colour every day','Berries, leafy greens, beets and peppers for vitamin C, nitrate and fibre.']);
-  f.push(['Fatty fish twice a week',A.diet==='vegan'?'Vegan: algae oil, plus walnuts, chia and flax.':A.diet==='veg'?'If you eat fish, salmon or sardines; otherwise algae oil, walnuts, chia and flax.':'Salmon, sardines, trout or mackerel.']);
-  f.push(['Calcium for bones','Dairy, or plant milks and tofu with added calcium.']);
-  if(has('goals','mood')||has('goals','stress')||has('goals','focus'))f.push(['Mediterranean pattern for the mind','Olive oil, legumes, nuts, vegetables and fish; linked to better mood in trials.']);
-  f.push(['Fluids','Drink to thirst and aim for pale-yellow urine. About 500 mL in the 2 hours before training.']);
-  return f}
+function loading(msg){app.innerHTML=`<div class="view"><p class="sub2">${esc(msg)}</p></div>`}
+function fail(msg){app.innerHTML=`<div class="view"><div class="alert"><strong>That didn't work</strong>${esc(msg)}</div><button class="btn" data-start>Start again</button></div>`}
 
-
-function drawRail(){rail.innerHTML=steps.map((_,i)=>`<i class="${i<=step?'on':''}"></i>`).join('')+`<i class="${step>=steps.length?'on':''}"></i>`}
-function opts(f){return`<div class="opts" role="group" aria-label="${f.label||steps[step].t}">${f.o.map(([v,l])=>{const on=f.type==='multi'?has(f.id,v):A[f.id]===v;return`<button type="button" class="opt" data-f="${f.id}" data-v="${v}" aria-pressed="${on}">${l}</button>`}).join('')}</div>`}
-function render(){
-  drawRail();
-  if(step>=steps.length)return results();
+/* ---------- questionnaire ---------- */
+function opts(f){return`<div class="opts" role="group" aria-label="${esc(f.label||steps[step].t)}">${f.o.map(([v,l])=>{const on=f.type==='multi'?has(f.id,v):A[f.id]===v;return`<button type="button" class="opt" data-f="${f.id}" data-v="${v}" aria-pressed="${on}">${l}</button>`}).join('')}</div>`}
+function quiz(){
   const s=steps[step];
-  app.innerHTML=`<section class="q"><p class="sub">Question ${step+1} of ${steps.length}</p><h2>${s.t}</h2>${s.s?`<p class="sub">${s.s}</p>`:''}
-  ${s.f.map(f=>`<div class="fld">${f.label&&s.f.length>1?`<span class="lab">${f.label}</span>`:''}${f.type==='number'?`<div class="num"><input id="w" type="number" inputmode="decimal" min="25" max="400" value="${A.w||''}" aria-label="Body weight"><div class="opts">${['kg','lb'].map(u=>`<button type="button" class="opt" data-unit="${u}" aria-pressed="${A.unit===u}">${u}</button>`).join('')}</div></div>`:opts(f)}</div>`).join('')}
-  <div class="nav">${step?'<button class="btn ghost" id="back">Back</button>':''}<button class="btn" id="next">${step===steps.length-1?'See my results':'Next'}</button><span class="err" id="err"></span></div>
-  <p class="note">Educational prototype, not medical advice. Supplements are not reviewed for effectiveness the way medicines are.</p></section>`;
+  app.innerHTML=`<section class="q view"><div class="rail">${steps.map((_,i)=>`<i class="${i<=step?'on':''}"></i>`).join('')}</div>
+  <p class="sub">${mode==='update'?'Updating your report · ':''}Question ${step+1} of ${steps.length}</p><h2>${s.t}</h2>${s.s?`<p class="sub">${s.s}</p>`:''}<p class="why"><b>Why we ask:</b> ${s.why}</p>
+  ${s.f.map(f=>`<div class="fld">${f.label&&s.f.length>1?`<span class="lab">${f.label}</span>`:''}${f.type==='number'?`<div class="num"><input id="w" type="number" inputmode="decimal" min="25" max="400" value="${esc(A.w||'')}" aria-label="Body weight"><div class="opts">${['kg','lb'].map(u=>`<button type="button" class="opt" data-unit="${u}" aria-pressed="${A.unit===u}">${u}</button>`).join('')}</div></div>`:opts(f)}</div>`).join('')}
+  <div class="nav">${step?'<button class="btn ghost" id="back">Back</button>':''}<button class="btn" id="next">${step===steps.length-1?(mode==='update'?'Update my report':'See my free preview'):'Next'}</button><span class="err" id="err"></span></div>
+  <p class="note" style="margin-top:22px">Your answers are sent securely to build your report. See the <a href="privacy.html">privacy policy</a>. Educational, not medical advice.</p></section>`;
 }
-app.addEventListener('click',e=>{
-  const o=e.target.closest('.opt');
-  if(o&&o.dataset.unit){A.unit=o.dataset.unit;save();return render()}
+async function submit(){
+  loading(mode==='update'?'Updating your report…':'Building your preview…');
+  const body=mode==='update'?{action:'update',id:cur.id,token:cur.token,answers:A}:{action:'create',answers:A};
+  const j=await call(body).catch(()=>({error:'Could not reach the server. Check your connection and try again.'}));
+  if(j.error)return fail(j.error);
+  if(mode==='create'){cur={id:j.id,token:j.token};ls.set('sc_report',cur);history.replaceState(null,'',link());teaser(j)}
+  else{full(j)}
+}
+
+/* ---------- teaser ---------- */
+function teaser(j,note){
+  last=j;const t=j.teaser;const minor=t.minor;
+  app.innerHTML=`<div class="view">
+  ${note?`<div class="info">${esc(note)}</div>`:''}
+  ${t.lowMood?`<div class="alert"><strong>Your mood answers matter more than any supplement</strong>Feeling down most days for two weeks is worth talking to a doctor about; effective help exists. If you ever feel unsafe or think about ending your life, call or text 9-8-8, any time.</div>`:''}
+  <div class="rh"><h2>Your free preview</h2></div>
+  <p class="sub" style="margin:0">Top focus areas</p><div class="chips">${t.focusAreas.map(x=>`<span class="chip">${esc(x)}</span>`).join('')}</div>
+  ${minor?`<div class="info">For under-18s we don't suggest supplements, and the paid report is for adults 18 and over. Sports bodies advise food and training first, with iron or vitamin D only after a blood test. Talk to a doctor or sports dietitian, and aim for at least 60 minutes of activity a day.</div>`:`
+  <div class="stats">
+   <div class="stat"><b>${+t.matched}</b><span>options matched your goals</span></div>
+   <div class="stat"><b>${+t.leftOut}</b><span>left out for your safety</span></div>
+   <div class="stat"><b>${+t.safetyNotes}</b><span>personal safety notes</span></div>
+   <div class="stat"><b>${+t.activeDays}</b><span>active days in your plan, built for ${esc(t.weekFocus)}</span></div>
+  </div>
+  ${t.insight?`<p class="sub2">One insight from your report</p><article class="panel" style="max-width:560px"><h3>${esc(t.insight.n)}</h3><div class="kind">Your top-ranked option</div><div class="rule"></div>
+   <div class="row"><span class="lab">Evidence</span><span>${pips(t.insight.gr)}${esc(t.insight.grade)}</span></div>
+   <div class="row"><span class="lab">Why</span><span>${esc(t.insight.why)}</span></div>
+   <div class="row"><span class="lab">Amount and timing</span><span>In the full report</span></div></article>`:''}
+  <p class="sub2">Unlocked in the full report</p>
+  <ul class="locked">
+   <li><b>All ${+t.matched} options</b>Evidence grade, studied amounts for your weight, and what each does</li>
+   <li><b>Food pairings and costs</b>What to eat with each, and monthly cost versus food-first swaps</li>
+   <li><b>Your 7-day plan</b>${+t.activeDays} active days built for ${esc(t.weekFocus)}</li>
+   <li><b>Your daily schedule</b>Hour by hour: meals, training and when to take what</li>
+   <li><b>Safety notes</b>${+t.safetyNotes} notes, plus what was left out and why</li>
+   <li><b>Printable PDF</b>And a plain summary for your doctor or pharmacist</li>
+  </ul>
+  <div class="unlock">
+   <button class="btn big" id="buy" ${j.payments?'':'disabled'} style="width:100%">${j.payments?'Unlock full report: $19.95 CAD':'Payments open soon'}</button>
+   <p class="fine">${j.payments?'One-time payment, securely processed by Stripe. Includes free updates for 90 days. 14-day refund if it isn\'t useful.':'We are finishing secure checkout. Save your private link below and come back soon; your answers are kept for 7 days.'}
+   <a href="privacy.html">Privacy policy</a> · <a href="refund.html">Refund policy</a></p>
+   <p class="err" id="buyerr"></p>
+  </div>`}
+  <div class="tools noprint"><button class="btn ghost" id="copylink">Copy my private link</button><button class="btn ghost" id="edit">Change my answers</button><button class="btn ghost" id="del">Delete my answers</button></div>
+  <p class="note">Your private link opens this preview, and later your full report, on any device. Anyone with the link can see it, so keep it to yourself. Unpaid answers are deleted automatically after 7 days.</p>
+  </div>`;
+}
+
+/* ---------- full report ---------- */
+function panel(p){return`<article class="panel"><h3>${esc(p.n)}</h3><div class="kind">${esc(p.k)}</div><div class="rule"></div>
+ <div class="row"><span class="lab">Evidence</span><span>${pips(p.gr)}${esc(p.grade)}</span></div>
+ <div class="row"><span class="lab">What it does</span><span>${esc(p.why)}</span></div>
+ <div class="row"><span class="lab">Studied amount</span><span>${esc(p.dose)}</span></div>
+ ${p.food?`<div class="row"><span class="lab">Pair with food</span><span>${esc(p.food)}</span></div>`:''}
+ ${p.cost?`<div class="row"><span class="lab">Cost vs food</span><span><b>${esc(p.cost.month)} a month.</b> ${esc(p.cost.alt)}</span></div>`:''}
+ ${p.warn&&p.warn.length?`<div class="row"><span class="lab">Check first</span><span class="flag">${p.warn.map(esc).join(' ')}</span></div>`:''}</article>`}
+function full(j){
+  last=j;const R=j.report,u=j.update||{};if(j.answers)A=Object.assign(fresh(),j.answers);
+  const D=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  const until=u.until?new Date(u.until).toLocaleDateString('en-CA',{year:'numeric',month:'long',day:'numeric'}):'';
+  app.innerHTML=`<div class="view">
+  ${R.lowMood?`<div class="alert"><strong>Your mood answers matter more than any supplement</strong>Feeling down most days for two weeks is worth talking to a doctor about; effective help exists. If you ever feel unsafe or think about ending your life, call or text 9-8-8, any time.</div>`:''}
+  ${R.tested?`<div class="info"><strong>Drug-tested athlete:</strong> use only batch-tested products (NSF Certified for Sport or Informed Sport). Even then, risk is never zero; you remain responsible for what you take.</div>`:''}
+  <div class="rh"><h2>Your Supplement Check report</h2><p class="sub">Focus: ${R.focusAreas.map(esc).join(', ')} · Generated ${new Date().toLocaleDateString('en-CA',{year:'numeric',month:'long',day:'numeric'})}</p></div>
+  <div class="tools noprint">
+   <button class="btn" id="print">Print or save as PDF</button>
+   <button class="btn ghost" id="ics">Add a 6-week re-check to my calendar</button>
+   ${u.ok?`<button class="btn ghost" id="upd">Update my answers (free until ${esc(until)})</button>`:''}
+   <button class="btn ghost" id="copylink">Copy my private link</button>
+   <button class="btn ghost" id="copy">Copy summary for my doctor</button>
+  </div>
+  ${R.minor?`<div class="info">For under-18s the report covers food and activity only.</div>`:`
+  <div class="sec"><h2>Best evidence first</h2><div class="grid">${R.top.map(panel).join('')}</div></div>
+  ${R.more.length?`<div class="sec"><h2>Also relevant, lower priority</h2><div class="grid">${R.more.map(panel).join('')}</div></div>`:''}
+  ${R.left.length?`<div class="sec"><h2>Left out for your safety</h2><div class="grid">${R.left.map(p=>`<article class="panel out"><h3>${esc(p.n)}</h3><div class="kind">${esc(p.k)}</div><div class="rule"></div><div class="row"><span class="lab">Evidence</span><span>${pips(p.gr)}${esc(p.grade)}</span></div><div class="row"><span class="lab">Left out</span><span class="flag">${esc(p.out)}</span></div></article>`).join('')}</div></div>`:''}`}
+  <div class="sec"><h2>Your week of activity</h2><p class="plan-note" style="margin:0 0 14px">Built around ${esc(R.week.focus)} and ${+R.week.days} active days. Shaded days are hard days; caffeine, beetroot and bicarbonate matter most on those.</p>
+   <div class="week">${R.week.wk.map((s,i)=>`<div class="day ${s.k>0?'hard':s.k<0?'rest':''}"><span class="dn">${D[i]}</span><span class="dt">${esc(s.t)}</span><span class="dx">${esc(s.d)}</span></div>`).join('')}</div>
+   ${R.week.notes.map(n=>`<p class="plan-note">${esc(n)}</p>`).join('')}</div>
+  <div class="sec"><h2>A day that gets the most from them</h2><p class="plan-note" style="margin:0 0 10px">Shift the times to suit your day; the order and spacing are what matter.</p>
+   <ol class="tl">${R.day.map(([t,h,d,x])=>`<li><time>${esc(t)}</time><div><b>${esc(h)}</b>${esc(d)}${x?`<div class="sup">${esc(x)}</div>`:''}</div></li>`).join('')}</ol></div>
+  <div class="sec"><h2>Build your plate</h2><ul class="cards">${R.plate.map(([t,d])=>`<li><b>${esc(t)}</b>${esc(d)}</li>`).join('')}</ul></div>
+  <div class="sec"><h2>Foundations that work better than pills</h2><ul class="cards">${R.foundations.map(([t,d])=>`<li><b>${esc(t)}</b>${esc(d)}</li>`).join('')}</ul></div>
+  <div class="sec"><h2>Buying in Canada</h2><ul class="cards"><li><b>Check for an NPN</b>Choose products with an 8-digit NPN or DIN-HM on the label, which shows Health Canada has licensed them.</li><li><b>Usually not worth the money</b>BCAAs if you eat enough protein, glutamine for performance, “testosterone boosters”, fat burners and proprietary blends that hide amounts.</li></ul></div>
+  <div class="sec noprint"><h2>Help improve Supplement Check</h2><p>Optionally send your answers anonymously for research. No name, email or contact details are included.</p><button class="btn ghost" id="send">Send anonymously</button> <span id="sendmsg" class="note"></span></div>
+  <div class="sec noprint"><h2>Your data</h2><p class="note">Your report is kept so your private link keeps working. You can delete it at any time; this cannot be undone.</p><button class="btn ghost" id="del">Delete my report</button></div>
+  <p class="note" style="margin-top:30px">Evidence grades draw on the IOC 2018 consensus on dietary supplements, the Australian Institute of Sport framework and ISSN position stands. Amounts are those used in research on healthy adults, not prescriptions. This report is educational and is not medical advice; review it with your doctor, pharmacist or dietitian.</p>
+  </div>`;
+}
+function summary(){const R=last.report;return['Supplement Check summary (educational, not medical advice)','Goals: '+R.focusAreas.join(', '),'Conditions: '+((A.cond||[]).join(', ')||'none'),'Medicines: '+((A.meds||[]).join(', ')||'none'),'Pregnant/breastfeeding: '+(A.preg||'not answered'),'',
+ 'Options to discuss:',...R.top.concat(R.more).map(p=>`- ${p.n} (${p.grade} evidence): ${p.dose}${p.warn.length?' Notes: '+p.warn.join(' '):''}`),'','Left out for safety:',...(R.left.length?R.left.map(p=>`- ${p.n}: ${p.out}`):['- none']),'',
+ 'Weekly plan: '+R.week.wk.map((s,i)=>['Mon','Tue','Wed','Thu','Fri','Sat','Sun'][i]+' '+s.t).join('; ')].join('\n')}
+function ics(){
+  const d=new Date(Date.now()+42*864e5);d.setHours(9,0,0,0);const e=new Date(d.getTime()+15*6e4);
+  const f=x=>x.toISOString().replace(/[-:]/g,'').replace(/\.\d{3}/,'');
+  const txt=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Supplement Check//EN','BEGIN:VEVENT','UID:'+cur.id+'@supplement-check','DTSTAMP:'+f(new Date()),'DTSTART:'+f(d),'DTEND:'+f(e),
+   'SUMMARY:Re-check your Supplement Check report','DESCRIPTION:Six weeks in: update your answers for a fresh report (free for 90 days). '+link(),'URL:'+link(),'END:VEVENT','END:VCALENDAR'].join('\r\n');
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([txt],{type:'text/calendar'}));a.download='supplement-check-recheck.ics';document.body.appendChild(a);a.click();a.remove();
+}
+function copy(text,btn,label){navigator.clipboard.writeText(text).then(()=>{btn.textContent='Copied'},()=>{btn.textContent='Copy failed: select the address bar instead'});setTimeout(()=>btn.textContent=label,2500)}
+
+/* ---------- events ---------- */
+document.addEventListener('click',async e=>{
+  const t=e.target;
+  if(t.closest('[data-start]')){e.preventDefault();A=fresh();step=0;mode='create';go('app');return quiz()}
+  if(t.id==='home'){e.preventDefault();go('landing');return}
+  if(t.id==='resumelink'){e.preventDefault();const s=ls.get('sc_report');if(s)location.href=`${SITE}?r=${s.id}&k=${s.token}`;return}
+  const o=t.closest('.opt');
+  if(o&&o.dataset.unit){A.unit=o.dataset.unit;return quiz()}
   if(o){const f=steps[step].f.find(x=>x.id===o.dataset.f),v=o.dataset.v;
     if(f.type==='multi'){const arr=A[f.id]||(A[f.id]=[]);const i=arr.indexOf(v);i<0?arr.push(v):arr.splice(i,1);
       if(f.id==='acts'){if(v==='none'&&i<0)A.acts=['none'];else if(v!=='none')A.acts=A.acts.filter(x=>x!=='none')}}
     else A[f.id]=A[f.id]===v?undefined:v;
-    save();return render()}
-  if(e.target.id==='next'){const miss=steps[step].f.find(f=>f.req&&(f.type==='multi'?!(A[f.id]||[]).length:!A[f.id]));
+    return quiz()}
+  if(t.id==='next'){const miss=steps[step].f.find(f=>f.req&&(f.type==='multi'?!(A[f.id]||[]).length:!A[f.id]));
     if(miss){document.getElementById('err').textContent='Please answer this one to continue.';return}
-    step++;save();render();window.scrollTo({top:0})}
-  if(e.target.id==='back'){step--;render()}
-  if(e.target.id==='restart'){A={goals:[],acts:[],cond:[],meds:[],unit:'kg'};step=0;save();render()}
-  if(e.target.id==='edit'){step=0;render()}
-  if(e.target.id==='send'){send(e.target)}
-  if(e.target.id==='copy'){navigator.clipboard.writeText(summary()).then(()=>e.target.textContent='Copied',()=>e.target.textContent='Copy failed: select the text instead')}
+    if(step<steps.length-1){step++;quiz();window.scrollTo({top:0})}else submit()}
+  if(t.id==='back'){step--;quiz()}
+  if(t.id==='edit'){mode='create';step=0;quiz()}
+  if(t.id==='upd'){mode='update';step=0;quiz();window.scrollTo({top:0})}
+  if(t.id==='print')window.print();
+  if(t.id==='ics')ics();
+  if(t.id==='copylink')copy(link(),t,'Copy my private link');
+  if(t.id==='copy')copy(summary(),t,'Copy summary for my doctor');
+  if(t.id==='buy'){t.disabled=true;t.textContent='Opening secure checkout…';
+    const j=await call({action:'checkout',id:cur.id,token:cur.token}).catch(()=>({error:'Could not reach the server.'}));
+    if(j.url){location.href=j.url;return}
+    if(j.paid){return load()}
+    document.getElementById('buyerr').textContent=j.error||'Checkout is unavailable right now.';t.textContent=j.payments===false?'Payments open soon':'Unlock full report: $19.95 CAD';t.disabled=j.payments===false}
+  if(t.id==='del'){
+    if(t.dataset.sure!=='1'){t.dataset.sure='1';t.textContent='Tap again to permanently delete';return}
+    const j=await call({action:'delete',id:cur.id,token:cur.token}).catch(()=>({error:'Could not reach the server.'}));
+    if(j.error)return fail(j.error);
+    try{localStorage.removeItem('sc_report')}catch(_){}
+    history.replaceState(null,'',SITE);cur=null;app.innerHTML='<div class="view"><div class="info"><strong>Deleted.</strong> Your answers and report have been removed from our database.</div><button class="btn" data-start>Start a new check</button></div>'}
+  if(t.id==='send'){const msg=document.getElementById('sendmsg');t.disabled=true;msg.textContent='Sending…';
+    const {unit,w,...ans}=A;
+    fetch(SUPA_URL+'/rest/v1/responses',{method:'POST',headers:{'apikey':SUPA_KEY,'Content-Type':'application/json','Prefer':'return=minimal'},
+      body:JSON.stringify({answers:ans,results:{picked:last.report.top.concat(last.report.more).map(p=>p.id)}})})
+    .then(r=>{if(!r.ok)throw 0;msg.textContent='Thank you. Sent anonymously.';t.textContent='Sent'})
+    .catch(()=>{msg.textContent='Could not send right now.';t.disabled=false})}
 });
-app.addEventListener('input',e=>{if(e.target.id==='w'){A.w=e.target.value;save()}});
+document.addEventListener('input',e=>{if(e.target.id==='w')A.w=e.target.value});
 
-let picked=[],left=[];
-function score(){
-  picked=[];left=[];
-  for(const s of S){
-    let sc=0;(A.goals||[]).forEach(g=>sc+=s.g[g]||0);
-    const fit=sc>0;(A.acts||[]).forEach(a=>sc+=s.a[a]||0);
-    const b=s.boost?s.boost():0;sc+=b;
-    if(!fit&&b<=0)continue;
-    sc+=s.gr;const c=s.chk();const w=[...c.w];
-    if(A.preg==='y'&&!c.out)w.unshift('Pregnant or breastfeeding: check with your clinician before starting.');
-    if(has('meds','other')&&!c.out)w.push('Ask your pharmacist to check it against your other prescriptions.');
-    (c.out?left:picked).push({s,sc,w,out:c.out});
-  }
-  picked.sort((a,b)=>b.sc-a.sc);
+/* ---------- routing ---------- */
+async function load(sessionId,cancelled){
+  go('app');loading(sessionId?'Confirming your payment…':'Opening your report…');
+  const j=await call({action:'get',id:cur.id,token:cur.token,session_id:sessionId||undefined}).catch(()=>({error:'Could not reach the server. Check your connection and try again.'}));
+  if(j.error){if(j.status===404){try{localStorage.removeItem('sc_report')}catch(_){}}return fail(j.error)}
+  ls.set('sc_report',cur);history.replaceState(null,'',link());
+  if(j.paid)full(j);
+  else teaser(j,cancelled?'Payment cancelled. Nothing was charged.':sessionId?'We could not confirm the payment yet. If you were charged, wait a minute and reload this page.':'');
 }
-const pips=g=>`<span class="pips" aria-hidden="true">${[1,2,3].map(i=>`<b class="${i<=g?'f':''}"></b>`).join('')}</span>`;
-function panel(p){return`<article class="panel ${p.out?'out':''}"><h3>${p.s.n}</h3><div class="kind">${p.s.k}</div><div class="rule"></div>
- <div class="row"><span class="lab">Evidence</span><span>${pips(p.s.gr)}${GR[p.s.gr]}</span></div>
- ${p.out?`<div class="row"><span class="lab">Left out</span><span class="flag">${p.out}</span></div>`:`
- <div class="row"><span class="lab">What it does</span><span>${p.s.why}</span></div>
- <div class="row"><span class="lab">Studied amount</span><span>${p.s.dose()}</span></div>
- ${FOOD[p.s.id]?`<div class="row"><span class="lab">Pair with food</span><span>${FOOD[p.s.id]}</span></div>`:''}
- ${p.w.length?`<div class="row"><span class="lab">Check first</span><span class="flag">${p.w.join(' ')}</span></div>`:''}`}</article>`}
-function foundations(){const f=[];
- f.push(['Sleep',A.sleepq==='poor'?'Poor sleep blunts every supplement here. A fixed wake time and a dark, cool room come first.':'7–9 hours keeps recovery, mood and focus on track.']);
- f.push(['Protein from food',A.prot==='y'?'You already spread protein across meals. Keep it up.':'Add a protein source to each meal before buying powder.']);
- f.push(['Move most days','150 minutes a week of moderate activity plus two strength sessions is the base guideline for adults.']);
- if(has('goals','mood')||has('goals','stress'))f.push(['Daylight and people','Morning daylight, time outdoors and regular contact with others have stronger evidence for mood than any capsule.']);
- if(A.long==='l')f.push(['Fuel long sessions','Carbohydrate during sessions over 90 minutes beats any supplement for endurance.']);
- return f}
-function summary(){score();return['Supplement Check summary (educational, not medical advice)','Goals: '+(A.goals||[]).join(', '),'Conditions: '+((A.cond||[]).join(', ')||'none'),'Medicines: '+((A.meds||[]).join(', ')||'none'),'Pregnant/breastfeeding: '+(A.preg||'not answered'),'',
- 'Options to discuss:',...picked.map(p=>`- ${p.s.n} (${GR[p.s.gr]} evidence): ${p.s.dose()}${FOOD[p.s.id]?' Food: '+FOOD[p.s.id]:''}${p.w.length?' Notes: '+p.w.join(' '):''}`),'','Weekly activity plan: '+plan().wk.map((t,i)=>['Mon','Tue','Wed','Thu','Fri','Sat','Sun'][i]+' '+SESS[t][0]).join('; '),'','Left out for safety:',...(left.length?left.map(p=>`- ${p.s.n}: ${p.out}`):['- none'])].join('\n')}
-function send(btn){
-  const msg=document.getElementById('sendmsg');btn.disabled=true;msg.textContent='Sending…';
-  const {unit,...ans}=A;
-  fetch(SUPA_URL.replace(/\/$/,'')+'/rest/v1/responses',{method:'POST',
-    headers:Object.assign({'apikey':SUPA_KEY,'Content-Type':'application/json','Prefer':'return=minimal'},SUPA_KEY.startsWith('eyJ')?{'Authorization':'Bearer '+SUPA_KEY}:{}),
-    body:JSON.stringify({answers:{...ans,w_kg:Math.round(kg())||null,w:undefined},results:{picked:picked.map(p=>p.s.id),left:left.map(p=>p.s.id)}})})
-  .then(r=>{if(!r.ok)throw 0;msg.textContent='Thank you. Your answers were sent.';btn.textContent='Sent'})
-  .catch(()=>{msg.textContent='Could not send right now. Please try again later.';btn.disabled=false});
-}
-function results(){
-  score();const minor=A.age==='u18';const low=+A.low||0;
-  const top=picked.slice(0,6),more=picked.slice(6);
-  app.innerHTML=`<section class="res">
-  ${low>=2?`<div class="alert"><strong>Your mood answers matter more than any supplement</strong>Feeling down most days for two weeks is worth talking to a doctor about; effective help exists. If you ever feel unsafe or think about ending your life, call or text 988 in Canada or the US, or your local emergency number.</div>`:''}
-  ${A.tested==='y'?`<div class="info"><strong>Drug-tested athlete:</strong> use only batch-tested products (NSF Certified for Sport or Informed Sport). Even then, risk is never zero; you remain responsible for what you take.</div>`:''}
-  <div class="rh"><h2>${minor?'For under-18s, food and training come first':top.length?`${top.length} options worth discussing, best evidence first`:'Nothing stood out for your goals'}</h2>
-  <div class="nav" style="margin:0"><button class="btn ghost" id="edit">Change answers</button><button class="btn ghost" id="restart">Start over</button></div></div>
-  ${minor?`<div class="info">Sports bodies advise against performance supplements for young athletes, apart from medically indicated ones such as iron or vitamin D after a blood test. Talk to a doctor or sports dietitian, and use the foundations below.</div>`:`
-  <div class="grid">${top.map(panel).join('')}</div>
-  ${more.length?`<div class="sec"><h2>Also relevant, lower priority</h2><div class="grid">${more.map(panel).join('')}</div></div>`:''}
-  ${left.length?`<div class="sec"><h2>Left out for your safety</h2><div class="grid">${left.map(panel).join('')}</div></div>`:''}`}
-  ${(()=>{const pl=plan(),P=new Set(minor?[]:top.concat(more).map(p=>p.s.id)),D=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
-   return`<div class="sec"><h2>Your week of activity</h2><p class="plan-note" style="margin:0 0 14px">Built around ${{strength:'strength',endurance:'endurance',sprint:'power and sport',general:'everyday health'}[pl.focus]} and ${({'0':3,'2':4,'4':5,'6':6}[A.freq]||4)} active days. Shaded days are hard days; supplements such as caffeine, beetroot and bicarbonate matter most on those.</p>
-   <div class="week">${pl.wk.map((t,i)=>{const s=SESS[t];return`<div class="day ${s[2]>0?'hard':s[2]<0?'rest':''}"><span class="dn">${D[i]}</span><span class="dt">${s[0]}</span><span class="dx">${s[1]}</span></div>`}).join('')}</div>
-   ${pl.notes.map(n=>`<p class="plan-note">${n}</p>`).join('')}</div>
-   <div class="sec"><h2>A day that gets the most from them</h2><p class="plan-note" style="margin:0 0 10px">Shift the times to suit your day; the order and spacing are what matter.${minor?'':' Supplement timing is shown only for the options suggested above.'}</p>
-   <ol class="tl">${day(P).map(([t,h,d,x])=>`<li><time>${t}</time><div><b>${h}</b>${d}${x?`<div class="sup">${x}</div>`:''}</div></li>`).join('')}</ol></div>
-   <div class="sec"><h2>Build your plate</h2><ul class="found">${plate().map(([t,d])=>`<li><b>${t}</b>${d}</li>`).join('')}</ul></div>`})()}
-  <div class="sec"><h2>Foundations that work better</h2><ul class="found">${foundations().map(([t,d])=>`<li><b>${t}</b>${d}</li>`).join('')}</ul></div>
-  <div class="sec"><h2>Usually not worth the money</h2><ul class="skip"><li><b>BCAAs</b> if you already eat enough protein.</li><li><b>Glutamine</b> for performance or muscle gain.</li><li><b>“Testosterone boosters”</b> and <b>fat burners</b>: little evidence, frequent contamination.</li><li><b>Proprietary blends</b> that hide the amount of each ingredient.</li></ul></div>
-  ${SUPA_URL&&SUPA_KEY?`<div class="sec"><h2>Help improve this app</h2><p>Send your answers anonymously to the app's creator. No name, email or contact details are included. This is optional.</p><button class="btn" id="send">Send my answers anonymously</button> <span id="sendmsg" class="note"></span></div>`:''}
-  ${minor?'':`<div class="sec"><h2>Take this to your doctor or pharmacist</h2><p>A plain-text summary of your answers and the options above.</p><button class="btn" id="copy">Copy summary</button></div>`}
-  <p class="note">Evidence grades draw on the IOC 2018 consensus on dietary supplements, the Australian Institute of Sport framework and ISSN position stands. Amounts are those used in research on healthy adults, not prescriptions. This prototype is educational and is not medical advice.</p></section>`;
-}
-render();
+const q=new URLSearchParams(location.search);
+if(q.get('r')&&q.get('k')){cur={id:q.get('r'),token:q.get('k')};load(q.get('session_id'),q.get('cancelled'))}
+else{const s=ls.get('sc_report');if(s&&s.id)document.getElementById('resume').hidden=false}
 }
 </script>
 </body>
